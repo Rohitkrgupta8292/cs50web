@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "SQLite local",
+            "database": "${workspaceFolder:cs50web}/flights.sql"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
