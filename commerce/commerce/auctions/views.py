@@ -6,6 +6,14 @@ from django.urls import reverse
 
 from .models import User, Category, Listing, Comments, Bid
 
+def index(request):
+    activeListings = Listing.objects.filter(isActive=True)
+    allCategories = Category.objects.all()
+    return render(request, "auctions/index.html", {
+        "listings": activeListings,
+        "categories": allCategories,
+    })
+
 def listing(request, id):
     listingDetails = Listing.objects.get(pk=id) 
     isListingInWatchlist = request.user in listingDetails.watchlist.all()
@@ -98,13 +106,6 @@ def addwatchlist(request, id):
     listingData.watchlist.add(currentuser)
     return HttpResponseRedirect(reverse(listing,args=(id, )))
 
-def index(request):
-    activeListings = Listing.objects.filter(isActive=True)
-    allCategories = Category.objects.all()
-    return render(request, "auctions/index.html", {
-        "listings": activeListings,
-        "categories": allCategories,
-    })
 
 def displayCategory(request):
     if request.method == "POST":
@@ -148,8 +149,6 @@ def createListing(request):
 
         newListing.save()
         return HttpResponseRedirect(reverse(index))
-
-
 
 def login_view(request):
     if request.method == "POST":
