@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+
+    <script type="text/babel">
+        function Hello(props){
+            return (
+                <h1>Hello, {props.name}!</h1>
+            )
+        }
+        function App() {
+            const x = 1
+            const y = 2
+            return (
+                <div>
+                    <Hello name="harry" />
+                    <Hello name="Ron" />
+                    <Hello name="Hermoine" />
+                </div>
+            )
+        }
+        ReactDOM.render(<App />, document.querySelector("#app"))
+    </script>
+    <script src="https:unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https:unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https:unpkg.com/babel-standalone@6/babel.min.js"></script>
+</body>
+
+</html>
