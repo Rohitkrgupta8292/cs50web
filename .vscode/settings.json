@@ -8,5 +8,6 @@
         }
     ],
     "sqltools.useNodeRuntime": true,
-    "python.REPL.enableREPLSmartSend": false
+    "python.REPL.enableREPLSmartSend": false,
+    "livePreview.defaultPreviewPath": "/project4/network/templates/network/index.html"
 }
