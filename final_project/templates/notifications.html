@@ -1,0 +1,418 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %}
+{% block title %} {{ request.user.username}}'s Notications - TImber {% endblock %} 
+{% block content %}
+<div class="flex flex-col justify-between min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+    <!-- Header -->
+  {% comment %} <header class="font lg:hidden head flex justify-between items-center p-3 h-16">
+    <div onclick="showSidebarModel()" class="text-white text-xl p-1 btn-hover transition-transform duration-300 w-7">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="logo" class="w-32 btn-hover transition-transform duration-300">
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div id="search-div" class="hidden relative px-4 w-full">
+      <i class="fas fa-search absolute left-7 top-3 text-blue-900">
+      </i>
+      <input id="search-input" class="p-2 pl-9 focus:outline-none focus:ring-4 focus:ring-blue-400 w-full rounded-2xl text-blue-900" placeholder="Search" type="text"/>
+    </div>
+    <div class="p-1 text-white text-xl btn-hover transition-transform duration-300 w-7">
+      <i id="search-icon" onclick="toggleSearch()" class="fa-solid fa-magnifying-glass"></i>
+      <i id="close-icon" onclick="toggleSearch()" class="fa-solid fa-xmark hidden"></i>
+     </div>
+  </header> {% endcomment %}
+  {% include "header.html" %}
+  <div class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center relative">
+        <i onclick="goBack()" class="fa-solid fa-arrow-left-long text-2xl mr-1 cursor-pointer hover:text-blue-600 text-blue-900">
+        </i>
+        <h1 class="sm:text-2xl text-xl text-blue-900 font-semibold">
+          Notifications
+        </h1>
+        <div class="relative ml-2">
+           <i class="fas fa-bell text-xl">
+           </i>
+           <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+            {{ unread_count }}
+           </span>
+        </div>
+      </div>
+      {% if unread_count > 0 %}
+      <button onclick="notificationRedirect()" class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105">
+        Mark all as read
+      </button>
+      {% endif %}
+    </div>
+    <div class="border-b-4 border-blue-500 w-24 mb-4">
+    </div>
+    <div class="space-y-4 mt-8">
+      {% if recent_notifications %}
+      {% for notification in recent_notifications %}
+      {% if notification.notification_type == 'like' %}
+      <div class="bg-white p-4 shadow flex flex-col {% if not notification.read %} border-l-4 border-red-500 {% endif %}">
+       <div class="flex items-center mb-2">
+        <img alt="Profile picture of John Doe" class="w-12 h-12 rounded-full" height="50"src="{% if notification.actor.profile_picture %} {{ notification.actor.profile_picture.url }} {% else %} {% static '/no-profile-pic.png' %} {% endif %}" width="50"/>
+        <div class="ml-4">
+         <a href="{% url 'user_profile'  notification.actor.username %}" class="flex items-center">
+          <p class="font-bold text-blue-900">
+            {% if notification.actor.first_name and notification.actor.first_name %}
+            {{ notification.actor.first_name }} {{ notification.actor.last_name }}
+            {% else %}
+            {{ notification.actor.username|remove_special_chars }}
+            {% endif %}
+          </p>
+          <p class="text-gray-500 ml-2 hover:underline">
+            {{ notification.actor.username }}
+          </p>
+         </a>
+         <p class="text-gray-400 text-sm">
+          {{ notification.created_at|timesince }} ago
+         </p>
+        </div>
+       </div>
+       <a href="{{ notification.post.get_absolute_url }}" class="flex items-center justify-between">
+        <div>
+         <p class="font-semibold">
+          <i class="fas fa-heart text-xl text-red-500"></i>
+          Liked to your post
+         </p>
+         <p class="text-gray-600">
+          {{ notification.post.title }}
+         </p>
+        </div>
+        {% if notification.post.thumbnail %}
+        <img alt="{{ notification.post.title }}'s of the post" class="w-20 h-20 ml-4" height="80" src="{{ notification.post.thumbnail.url }}" width="80"/>
+        {% endif %}
+       </a>
+      </div>
+      {% elif notification.notification_type == 'comment' %}
+      <div class="bg-white p-4 shadow flex flex-col {% if not notification.read %} border-l-4 border-red-500 {% endif %}">
+        <div class="flex items-center mb-2">
+         <img alt="Profile picture of John Doe" class="w-12 h-12 rounded-full" height="50"src="{% if notification.actor.profile_picture %} {{ notification.actor.profile_picture.url }} {% else %} {% static '/no-profile-pic.png' %} {% endif %}" width="50"/>
+         <div class="ml-4">
+          <a href="{% url 'user_profile'  notification.actor.username %}" class="flex items-center">
+           <p class="font-bold text-blue-900">
+             {% if notification.actor.first_name and notification.actor.first_name %}
+             {{ notification.actor.first_name }} {{ notification.actor.last_name }}
+             {% else %}
+             {{ notification.actor.username|remove_special_chars }}
+             {% endif %}
+           </p>
+           <p class="text-gray-500 ml-2 hover:underline">
+             @{{ notification.actor.username }}
+           </p>
+          </a>
+          <p class="text-gray-400 text-sm">
+           {{ notification.created_at|timesince }} ago
+          </p>
+         </div>
+        </div>
+        <a href="{{ notification.post.get_absolute_url }}" class="flex items-center justify-between">
+         <div>
+          <p class="font-semibold">
+           <i class="fas fa-comment text-xl text-blue-600"></i>
+           Commented to your post: <span class="p-1 italic text-blue-500 border-2 border-blue-500 bg-gray-300 rounded-lg">{{ notification.comment.content }}</span>
+          </p>
+          <p class="text-gray-600 hover:underline">
+           {{ notification.post.title }}
+          </p>
+         </div>
+         {% if notification.post.thumbnail %}
+         <img alt="{{ notification.post.title }}'s of the post" class="w-20 h-20 ml-4" height="80" src="{{ notification.post.thumbnail.url }}" width="80"/>
+         {% endif %}
+        </a>
+      </div>
+      {% elif notification.notification_type == 'reply' %}
+      <div class="bg-white p-4 shadow flex flex-col {% if not notification.read %} border-l-4 border-red-500 {% endif %}">
+        <div class="flex items-center mb-2">
+         <img alt="Profile picture of John Doe" class="w-12 h-12 rounded-full" height="50"src="{% if notification.actor.profile_picture %} {{ notification.actor.profile_picture.url }} {% else %} {% static '/no-profile-pic.png' %} {% endif %}" width="50"/>
+         <div class="ml-4">
+          <a href="{% url 'user_profile'  notification.actor.username %}" class="flex items-center">
+           <p class="font-bold text-blue-900">
+             {% if notification.actor.first_name and notification.actor.first_name %}
+             {{ notification.actor.first_name }} {{ notification.actor.last_name }}
+             {% else %}
+             {{ notification.actor.username|remove_special_chars }}
+             {% endif %}
+           </p>
+           <p class="text-gray-500 ml-2 hover:underline">
+             @{{ notification.actor.username }}
+           </p>
+          </a>
+          <p class="text-gray-400 text-sm">
+           {{ notification.created_at|timesince }} ago
+          </p>
+         </div>
+        </div>
+        <a href="{{ notification.post.get_absolute_url }}" class="flex items-center justify-between">
+         <div>
+          <p class="font-semibold">
+           <i class="fas fa-reply text-xl text-green-500"></i>
+           Replied to <span href="{% url 'user_profile' notification.comment.parent.author.username %}" class="p-1 italic text-green-500 border-2 border-green-500 bg-gray-300 rounded-lg">@{{ notification.comment.parent.author.username }}</span> to your post: <span class="p-1 italic text-green-600 border-2 border-green-600 bg-gray-300 rounded-lg">{{ notification.comment.content }}</span>
+          </p>
+          <p class="text-gray-600 hover:underline">
+           {{ notification.post.title }}
+          </p>
+         </div>
+         {% if notification.post.thumbnail %}
+         <img alt="{{ notification.post.title }}'s of the post" class="w-20 h-20 ml-4" height="80" src="{{ notification.post.thumbnail.url }}" width="80"/>
+         {% endif %}
+        </a>
+      </div>
+      {% elif notification.notification_type == 'reply1' %}
+      <div class="bg-white p-4 shadow flex flex-col {% if not notification.read %} border-l-4 border-red-500 {% endif %}">
+        <div class="flex items-center mb-2">
+         <img alt="Profile picture of John Doe" class="w-12 h-12 rounded-full" height="50"src="{% if notification.actor.profile_picture %} {{ notification.actor.profile_picture.url }} {% else %} {% static '/no-profile-pic.png' %} {% endif %}" width="50"/>
+         <div class="ml-4">
+          <a href="{% url 'user_profile'  notification.actor.username %}" class="flex items-center">
+           <p class="font-bold text-blue-900">
+             {% if notification.actor.first_name and notification.actor.first_name %}
+             {{ notification.actor.first_name }} {{ notification.actor.last_name }}
+             {% else %}
+             {{ notification.actor.username|remove_special_chars }}
+             {% endif %}
+           </p>
+           <p class="text-gray-500 ml-2 hover:underline">
+             @{{ notification.actor.username }}
+           </p>
+          </a>
+          <p class="text-gray-400 text-sm">
+           {{ notification.created_at|timesince }} ago
+          </p>
+         </div>
+        </div>
+        <a href="{{ notification.post.get_absolute_url }}" class="flex items-center justify-between">
+         <div>
+          <p class="font-semibold">
+           <i class="fas fa-reply text-xl text-green-500"></i>
+           Replied to your comment: <span class="p-1 text-green-600 border-2 border-green-600 bg-gray-300  italic rounded-lg">{{ notification.comment.content }}</span>
+          </p>
+          <p class="text-gray-600 hover:underline">
+           {{ notification.post.title }}
+          </p>
+         </div>
+         {% if notification.post.thumbnail %}
+         <img alt="{{ notification.post.title }}'s of the post" class="w-20 h-20 ml-4" height="80" src="{{ notification.post.thumbnail.url }}" width="80"/>
+         {% endif %}
+        </a>
+      </div>
+      {% elif notification.notification_type == 'follow' %}
+      <div class="bg-white p-4 shadow flex flex-col gap-2 {% if not notification.read %} border-l-4 border-red-500 {% endif %}">
+        <div class="flex items-center mb-2">
+         <img alt="Profile picture of John Doe" class="w-12 h-12 rounded-full" height="50"src="{% if notification.follower.profile_picture %} {{ notification.follower.profile_picture.url }} {% else %} {% static '/no-profile-pic.png' %} {% endif %}" width="50"/>
+         <div class="ml-4">
+          <a href="{% url 'user_profile'  notification.follower.username %}" class="flex items-center">
+           <p class="font-bold text-blue-900">
+             {% if notification.follower.first_name and notification.follower.first_name %}
+             {{ notification.follower.first_name }} {{ notification.follower.last_name }}
+             {% else %}
+             {{ notification.follower.username|remove_special_chars }}
+             {% endif %}
+           </p>
+           <p class="text-gray-500 ml-2 hover:underline">
+             @{{ notification.follower.username }}
+           </p>
+          </a>
+          <p class="text-gray-400 text-sm">
+           {{ notification.created_at|timesince }} ago
+          </p>
+         </div>
+        </div>
+        <div class="flex items-center justify-between">
+         <div>
+          <p class="font-semibold">
+           <i class="fas fa-user-check text-xl text-blue-500"></i>
+            Started Following you!
+          </p>
+         </div>
+        </div>
+      </div>
+      {% elif notification.notification_type == 'post' %}
+      <div class="bg-white p-4 shadow flex flex-col {% if not notification.read %} border-l-4 border-red-500 {% endif %}">
+        <div class="flex items-center mb-2">
+         <img alt="Profile picture of John Doe" class="w-12 h-12 rounded-full" height="50"src="{% if notification.actor.profile_picture %} {{ notification.actor.profile_picture.url }} {% else %} {% static '/no-profile-pic.png' %} {% endif %}" width="50"/>
+         <div class="ml-4">
+          <a href="{% url 'user_profile'  notification.actor.username %}" class="flex items-center">
+           <p class="font-bold text-blue-900">
+             {% if notification.actor.first_name and notification.actor.first_name %}
+             {{ notification.actor.first_name }} {{ notification.actor.last_name }}
+             {% else %}
+             {{ notification.actor.username|remove_special_chars }}
+             {% endif %}
+           </p>
+           <p class="text-gray-500 ml-2 hover:underline">
+             {{ notification.actor.username }}
+           </p>
+          </a>
+          <p class="text-gray-400 text-sm">
+           {{ notification.created_at|timesince }} ago
+          </p>
+         </div>
+        </div>
+        <a href="{{ notification.post.get_absolute_url }}" class="flex items-center justify-between">
+         <div>
+          <p class="font-semibold">
+           <i class="fas fa-image text-xl text-orange-500"></i>
+           Uploaded a new post
+          </p>
+          <p class="text-gray-600">
+           {{ notification.post.title }}
+          </p>
+         </div>
+         {% if notification.post.thumbnail %}
+         <img alt="{{ notification.post.title }}'s of the post" class="w-20 h-20 ml-4" height="80" src="{{ notification.post.thumbnail.url }}" width="80"/>
+         {% endif %}
+        </a>
+       </div>
+      {% endif %}
+      {% endfor %}
+      {% else %}
+      <div class="p-6 py-12 text-center  bg-white shadow-lg rounded-lg">
+        <div class="flex justify-center items-center gap-2 mb-2">
+          <i class="fa-solid fa-bell-slash text-4xl text-blue-900"></i>
+          <p class="text-2xl font-semibold text-blue-900">No Notifications</p>
+        </div>
+        <p class="text-lg text-gray-500">You have not received any Notifications yet.</p>
+        {% comment %} <i class="fa-solid fa-bell-slash"></i> {% endcomment %}
+        {% comment %} <span>No notifications Available.</span> {% endcomment %}
+      </div>
+      {% endif %}
+      {% comment %} <div class="bg-white p-4 shadow flex flex-col border-l-4 border-blue-500">
+       <div class="flex items-center mb-2">
+        <img alt="Profile picture of Richard Miles" class="w-12 h-12 rounded-full" height="50" src="https://storage.googleapis.com/a1aa/image/nDbm-AZQFxTelqkLVCXe3lAHVAzytnIicYpb6QvloJg.jpg" width="50"/>
+        <div class="ml-4">
+         <div class="flex items-center">
+          <p class="font-bold">
+           Richard Miles
+          </p>
+          <p class="text-gray-500 ml-2">
+           @richardmiles
+          </p>
+         </div>
+         <p class="text-gray-400 text-sm">
+          10 mins ago
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="font-semibold">
+          liked your post
+         </p>
+         <p class="text-gray-600">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde, dolorem.
+         </p>
+        </div>
+        <img alt="Thumbnail of the post" class="w-12 h-12 ml-4" height="50" src="https://storage.googleapis.com/a1aa/image/DpDz0ijh-7tT7U5NIVezSBoX2QCh-Cdd12MO8Sh8FgE.jpg" width="50"/>
+       </div>
+      </div>
+      <div class="bg-white p-4 shadow flex flex-col">
+       <div class="flex items-center mb-2">
+        <img alt="Profile picture of Brian Cumin" class="w-12 h-12 rounded-full" height="50" src="https://storage.googleapis.com/a1aa/image/EtSnjaxqjRhMkqi5TEhyhr6Aq5GomlhHOS0meayO_iU.jpg" width="50"/>
+        <div class="ml-4">
+         <div class="flex items-center">
+          <p class="font-bold">
+           Brian Cumin
+          </p>
+          <p class="text-gray-500 ml-2">
+           @briancumin
+          </p>
+         </div>
+         <p class="text-gray-400 text-sm">
+          10 mins ago
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="font-semibold">
+          reacted to your post
+         </p>
+         <p class="text-gray-600">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde, dolorem.
+         </p>
+        </div>
+        <img alt="Thumbnail of the post" class="w-12 h-12 ml-4" height="50" src="https://storage.googleapis.com/a1aa/image/DpDz0ijh-7tT7U5NIVezSBoX2QCh-Cdd12MO8Sh8FgE.jpg" width="50"/>
+       </div>
+      </div>
+      <div class="bg-white p-4 shadow flex flex-col">
+       <div class="flex items-center mb-2">
+        <img alt="Profile picture of Lance Bogrol" class="w-12 h-12 rounded-full" height="50" src="https://storage.googleapis.com/a1aa/image/YMH5B7H3N2ujOpKGUsycp-0bsPPNcBbxJnm_CzCW2Ls.jpg" width="50"/>
+        <div class="ml-4">
+         <div class="flex items-center">
+          <p class="font-bold">
+           Lance Bogrol
+          </p>
+          <p class="text-gray-500 ml-2">
+           @lancebogrol
+          </p>
+         </div>
+         <p class="text-gray-400 text-sm">
+          10 mins ago
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="font-semibold">
+          reacted to your post
+         </p>
+         <p class="text-gray-600">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde, dolorem.
+         </p>
+        </div>
+        <img alt="Thumbnail of the post" class="w-12 h-12 ml-4" height="50" src="https://storage.googleapis.com/a1aa/image/DpDz0ijh-7tT7U5NIVezSBoX2QCh-Cdd12MO8Sh8FgE.jpg" width="50"/>
+       </div>
+      </div>
+      <div class="bg-white p-4 shadow flex flex-col">
+       <div class="flex items-center mb-2">
+        <img alt="Profile picture of Parsley Montana" class="w-12 h-12 rounded-full" height="50" src="https://storage.googleapis.com/a1aa/image/sx92kEtu1YT_8_seRVmgjFe_j-0XOLsg5Beit6IMO7o.jpg" width="50"/>
+        <div class="ml-4">
+         <div class="flex items-center">
+          <p class="font-bold">
+           Parsley Montana
+          </p>
+          <p class="text-gray-500 ml-2">
+           @parsleymontana
+          </p>
+         </div>
+         <p class="text-gray-400 text-sm">
+          10 mins ago
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="font-semibold">
+          reacted to your post
+         </p>
+         <p class="text-gray-600">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde, dolorem.
+         </p>
+        </div>
+        <img alt="Thumbnail of the post" class="w-12 h-12 ml-4" height="50" src="https://storage.googleapis.com/a1aa/image/DpDz0ijh-7tT7U5NIVezSBoX2QCh-Cdd12MO8Sh8FgE.jpg" width="50"/>
+       </div>
+      </div> {% endcomment %}
+    </div>
+  </div>
+  {% include "footer.html" %}
+  {% comment %} <footer class="font lg:hidden bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer>  {% endcomment %}
+</div>
+{% endblock %}

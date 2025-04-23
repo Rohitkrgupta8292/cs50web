@@ -1,0 +1,212 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %}
+{% block title %}{{ tag }}'s Posts - TImber {% endblock %} 
+{% block content %}
+<div class="flex flex-col justify-between min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+    <!-- Header -->
+  {% comment %} <header class="font lg:hidden head flex justify-between items-center p-3 h-16">
+    <div onclick="showSidebarModel()" class="text-white text-xl p-1 btn-hover transition-transform duration-300 w-7">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="logo" class="w-32 btn-hover transition-transform duration-300">
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div id="search-div" class="hidden relative px-4 w-full">
+      <i class="fas fa-search absolute left-7 top-3 text-blue-900">
+      </i>
+      <input id="search-input" class="p-2 pl-9 focus:outline-none focus:ring-4 focus:ring-blue-400 w-full rounded-2xl text-blue-900" placeholder="Search" type="text"/>
+    </div>
+    <div class="p-1 text-white text-xl btn-hover transition-transform duration-300 w-7">
+      <i id="search-icon" onclick="toggleSearch()" class="fa-solid fa-magnifying-glass"></i>
+      <i id="close-icon" onclick="toggleSearch()" class="fa-solid fa-xmark hidden"></i>
+     </div>
+  </header> {% endcomment %}
+  {% include "header.html" %}
+  <!--Posts-->
+  <div class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    <div class="flex justify-between items-center">
+        <div class="text-2xl font-bold text-blue-900">
+          <i onclick="goBack()" class="fa-solid fa-arrow-left-long mr-1 cursor-pointer hover:text-blue-600"></i>
+          <span>{{ tag }}</span>
+        </div>
+        <div class="flex space-x-4">
+          <button onclick="toggle_post()" id="recent_post_button" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <i class="fas fa-clock mr-2"></i>Recent
+          </button>
+          <button onclick="toggle_post()" id="oldest_post_button" class="bg-gray-500 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+              <i class="fas fa-sort-amount-down mr-2"></i>Oldest
+          </button>
+        </div>
+    </div>
+    <div class="border-b-4 border-blue-500 w-24 mb-4">
+    </div>
+    <!--Recent Posts Section -->
+    <div class="mt-6" id="recent_posts">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-blue-900">Posts:{{ total_posts }}</h2>
+          <div class="toggle-view1 flex space-x-2">
+            <button
+              class="bg-gray-300 text-blue-700 text-sm px-4 py-1 rounded-full active hover:bg-gray-400 transition duration-300"
+              onclick="toggleView1('tile')"
+            >
+              <i class="fas fa-th"></i>
+            </button>
+            <button
+              class="bg-gray-300 text-blue-700 text-sm px-4 py-1 rounded-full hover:bg-gray-400 transition duration-300"
+              onclick="toggleView1('list')"
+            >
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
+        </div>
+        {% if recent_posts %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-6"
+          id="post-container1">
+          <!-- Example Post -->
+          {% for post in recent_posts %}
+          <div class="bg-white rounded-lg shadow-md overflow-hidden post hover-effect mt-2">
+            <a href="{% url 'post_detail' post.slug %}">
+              {% if post.thumbnail %}
+              <img
+                alt="{{ post.title }}'s thumbnail"
+                class="w-full h-48 object-cover"
+                height="400"
+                src="{{ post.thumbnail.url }}"
+                {% comment %} width="600" {% endcomment %}
+              />
+              {% endif %}
+              <div class="px-4 pt-4">
+                <h3 class="text-lg font-bold text-blue-800 mb-2 text-wrap">{{ post.title|truncatechars:50 }}</h3>
+                <p class="text-gray-800 mb-2 text-wrap">
+                  {{ post.get_limited_content|safe|truncatechars:90 }}
+                </p>
+                <div class="post-meta">
+                  <p class="text-sm text-gray-600">
+                    <strong>Category:</strong>{{ post.category }}
+                  </p>
+                  <p class="text-sm text-blue-600">
+                    {{ post.tags.all|join:", " }}
+                  </p>
+                </div>
+              </div>
+            </a>
+            <div class="flex text-gray-600 space-x-2 font-semibold px-4 pb-4">
+              <button
+              class="text-green-600 rounded-full p-1 px-2 btn-share"
+              onclick="sharePost('{{ post.title }}', '{{ post.get_absolute_url }}')">
+              <i class="fa-solid fa-share-nodes"></i> Share
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+          <!-- Repeat for more posts -->
+        </div>
+        {% else %}
+        <div class="text-3xl px-4 py-12 text-blue-800 text-center flex justify-center items-center bg-white shadow-lg rounded-lg">
+          <span>No Posts Available.</span>
+        </div>
+        {% endif %}
+        {% comment %} {% if total_posts > 10 %}
+        <a href="{% url 'posts' user.username %}">
+          <div class="text-blue-700 mt-4 hover:text-blue-400 border-2 border-blue-700  hover:border-blue-400 rounded-2xl p-2 mx-auto text-center cursor-pointer">
+            <span>View all Posts</span>
+            <i class="fa-solid fa-arrow-right-long"></i>
+          </div></a>
+        {% endif %} {% endcomment %}
+    </div>
+    <!--Oldest Posts Section -->
+    <div class="mt-6 hidden" id="oldest_posts">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-blue-900">Posts:{{ total_posts }}</h2>
+          <div class="toggle-view2 flex space-x-2">
+            <button
+              class="bg-gray-300 text-blue-700 text-sm px-4 py-1 rounded-full active hover:bg-gray-400 transition duration-300"
+              onclick="toggleView2('tile')"
+            >
+              <i class="fas fa-th"></i>
+            </button>
+            <button
+              class="bg-gray-300 text-blue-700 text-sm px-4 py-1 rounded-full hover:bg-gray-400 transition duration-300"
+              onclick="toggleView2('list')"
+            >
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
+        </div>
+        {% if oldest_posts %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-6"
+          id="post-container2">
+          <!-- Example Post -->
+          {% for post in oldest_posts %}
+          <div class="bg-white rounded-lg shadow-md overflow-hidden post hover-effect mt-2">
+            <a href="{% url 'post_detail' post.slug %}">
+              {% if post.thumbnail %}
+              <img
+                alt="{{ post.title }}'s thumbnail"
+                class="w-full h-48 object-cover"
+                height="400"
+                src="{{ post.thumbnail.url }}"
+                {% comment %} width="600" {% endcomment %}
+              />
+              {% endif %}
+              <div class="px-4 pt-4">
+                <h3 class="text-lg font-bold text-blue-800 mb-2 text-wrap">{{ post.title|truncatechars:50 }}</h3>
+                <p class="text-gray-800 mb-2 text-wrap">
+                  {{ post.get_limited_content|safe|truncatechars:90 }}
+                </p>
+                <div class="post-meta">
+                  <p class="text-sm text-gray-600">
+                    <strong>Category:</strong>{{ post.category }}
+                  </p>
+                  <p class="text-sm text-blue-600">
+                    {{ post.tags.all|join:", " }}
+                  </p>
+                </div>
+              </div>
+            </a>
+            <div class="flex text-gray-600 space-x-2 font-semibold px-4 pb-4">
+              <button
+              class="text-green-600 rounded-full p-1 px-2 btn-share"
+              onclick="sharePost('{{ post.title }}', '{{ post.get_absolute_url }}')">
+              <i class="fa-solid fa-share-nodes"></i> Share
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+          <!-- Repeat for more posts -->
+        </div>
+        {% else %}
+        <div class="text-3xl px-4 py-12 text-blue-800 text-center flex justify-center items-center bg-white shadow-lg rounded-lg">
+          <span>No Posts Available.</span>
+        </div>
+        {% endif %}
+        {% comment %} {% if total_posts > 10 %}
+        <a href="{% url 'posts' user.username %}">
+          <div class="text-blue-700 mt-4 hover:text-blue-400 border-2 border-blue-700  hover:border-blue-400 rounded-2xl p-2 mx-auto text-center cursor-pointer">
+            <span>View all Posts</span>
+            <i class="fa-solid fa-arrow-right-long"></i>
+          </div></a>
+        {% endif %} {% endcomment %}
+    </div>
+  </div>
+  <!-- Footer -->
+  {% include "footer.html" %}
+  {% comment %} <footer class="font lg:hidden bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer>  {% endcomment %}
+</div>
+{% endblock %}

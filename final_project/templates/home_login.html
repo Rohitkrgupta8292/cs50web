@@ -1,0 +1,245 @@
+{% extends "layout.html" %} {% load static %} {% load my_filters %}
+{% block content %}
+<div class="text-white flex flex-col min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+  <!-- Header -->
+  {% include "header.html" %}
+  <div class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    {% comment %} <div class="flex items-center">
+      <i onclick="goBack()" class="fa-solid fa-arrow-left-long text-2xl mr-1 cursor-pointer hover:text-blue-600 text-blue-900">
+      </i>
+      <h1 class="sm:text-2xl text-xl text-blue-900 font-semibold">
+        Home
+      </h1>
+    </div>
+    <div class="border-b-4 border-blue-500 w-24 mb-4">
+    </div> {% endcomment %}
+    <!-- Tabs -->
+    <div class="tab bg-white mb-4 text-blue-900">
+     <button class="tablinks tabButton w-[33%]" id="defaultOpen" onclick="openTab(event, 'LatestPosts')">
+      Latest Posts
+     </button>
+     <button class="tablinks tabButton w-[34%]" onclick="openTab(event, 'FollowingPosts')">
+      Following Posts
+     </button>
+     <button class="tablinks tabButton w-[33%]" onclick="openTab(event, 'LikedPosts')">
+      Liked Posts
+     </button>
+    </div>
+    <!-- Latest Posts -->
+    <div id="LatestPosts" class="tabcontent">
+      <!-- Posts -->
+      {% if latest_posts %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       {% for post, is_following in latest_posts_with_is_following %}
+       <!-- Post {{ post.id }} -->
+       <div class="bg-white hover-effect rounded shadow-md hover:shadow-xl">
+        <div class="flex items-center hover:bg-gray-200 transition-colors duration-200 bg-gray-100 rounded border-b-2 border-gray-200 p-2">
+         <div class="flex justify-between items-center w-full">
+          <a href="{{ post.author.get_absolute_url }}" class="flex items-center cursor-pointer latest-user">
+           {% if post.author.profile_picture %}
+           <img alt="Profile picture of {{ post.author }}" class="w-12 h-12 rounded-full mr-4 latest-user-img" height="50" src="{{ post.author.profile_picture.url }}" width="50"/>
+           {% else %}
+           <img alt="Profile picture of user 1" class="w-12 h-12 rounded-full mr-4 latest-user-img" height="50" src="{% static '/no-profile-pic.png' %}" width="50"/>
+           {% endif %}
+           <div class="flex flex-col">
+            <div class="font-bold text-blue-900 latest-user-name">
+             {% if post.author.first_name and post.author.last_name %}
+              {{ post.author.first_name }} {{ post.author.last_name }}
+             {% else %}
+              {{ post.author.username|remove_special_chars }}
+             {% endif %}
+            </div>
+            <div class="text-blue-500 latest-username">
+             @{{ post.author.username }}
+            </div>
+           </div>
+          </a>
+          <div class="button-latest-post">
+            {% if is_following %}
+            <button onclick="followUnfollow(this, '{{ post.author.username }}')" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700 follow-button-{{ post.author.username }}">
+             <i class="fa-solid fa-user-check"></i>
+             <span>Following</span>
+            </button>
+            {% else %}
+            {% if request.user == post.author%}
+            <button onclick="settingsUrl()" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700">
+              <i class="fa-solid fa-cog"></i>
+              <span>Settings</span>
+            </button>
+            {% else %}
+            <button onclick="followUnfollow(this, '{{ post.author.username }}')" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700 follow-button-{{ post.author.username }} ">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Follow</span>
+            </button>
+            {% endif %}
+            {% endif %}
+          </div>
+         </div>
+        </div>
+        <div onclick="RedirectToUrl('{{ post.get_absolute_url }}')" class="p-4 cursor-pointer hover:bg-gray-200 transition-color duration-200">
+          <div class="my-4">
+            <h2 class="text-xl font-bold text-blue-900">
+              {{ post.title }}.
+            </h2>
+           <p class="text-gray-700">
+            {{ post.get_limited_content|safe}}
+           </p>
+          </div>
+          {% if post.thumbnail %}
+          <img alt="Thumbnail image for {{ post.title }}" class="w-full h-64 rounded" height="200" src="{{ post.thumbnail.url }}" width="300"/>
+          {% endif %}
+        </div>
+       </div>
+       {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-3xl px-4 py-12 text-blue-800 text-center flex justify-center items-center bg-white shadow-lg rounded-lg">
+        <span>No Latest Posts Available.</span>
+      </div>
+      {% endif %}
+    </div>
+    <!-- Following Posts -->
+    <div id="FollowingPosts" class="tabcontent">
+       <!-- Posts -->
+      {% if following_posts %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       {% for post in following_posts %}
+       <!-- Post {{ post.id }} -->
+       <div class="bg-white hover-effect rounded shadow-md hover:shadow-xl">
+        <div class="flex items-center hover:bg-gray-200 transition-colors duration-200 bg-gray-100 rounded border-b-2 border-gray-200 p-2">
+         <div class="flex justify-between items-center w-full">
+          <a href="{{ post.author.get_absolute_url }}" class="flex items-center cursor-pointer latest-user">
+           {% if post.author.profile_picture %}
+           <img alt="Profile picture of {{ post.author }}" class="w-12 h-12 rounded-full mr-4 latest-user-img" height="50" src="{{ post.author.profile_picture.url }}" width="50"/>
+           {% else %}
+           <img alt="Profile picture of user 1" class="w-12 h-12 rounded-full mr-4 latest-user-img" height="50" src="{% static '/no-profile-pic.png' %}" width="50"/>
+           {% endif %}
+           <div class="flex flex-col">
+            <div class="font-bold text-blue-900 latest-user-name">
+             {% if post.author.first_name and post.author.last_name %}
+              {{ post.author.first_name }} {{ post.author.last_name }}
+             {% else %}
+              {{ post.author.username|remove_special_chars }}
+             {% endif %}
+            </div>
+            <div class="text-blue-500 latest-username">
+             @{{ post.author.username }}
+            </div>
+           </div>
+          </a>
+          <div class="button-following-post">
+            <button onclick="followUnfollow(this, '{{ post.author.username }}')" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700 follow-button-{{ post.author.username }}">
+             <i class="fa-solid fa-user-check"></i>
+             <span>Following</span>
+            </button>
+          </div>
+         </div>
+        </div>
+        <div onclick="RedirectToUrl('{{ post.get_absolute_url }}')" class="p-4 cursor-pointer hover:bg-gray-200 transition-color duration-200">
+          <div class="my-4">
+            <h2 class="text-xl font-bold text-blue-900">
+              {{ post.title }}.
+            </h2>
+           <p class="text-gray-700">
+            {{ post.get_limited_content|safe}}
+           </p>
+          </div>
+          {% if post.thumbnail %}
+          <img alt="Thumbnail image for {{ post.title }}" class="w-full h-64 rounded" height="200" src="{{ post.thumbnail.url }}" width="300"/>
+          {% endif %}
+        </div>
+       </div>
+       {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-3xl px-4 py-12 text-blue-800 text-center flex justify-center items-center bg-white shadow-lg rounded-lg">
+        <span>No Following Posts Available.</span>
+      </div>
+      {% endif %}
+    </div>
+    <!-- Liked Posts -->
+    <div id="LikedPosts" class="tabcontent">
+       <!-- Posts -->
+      {% if liked_posts %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       {% for post, is_following in liked_posts_with_is_following %}
+       <!-- Post {{ post.id }} -->
+       <div class="bg-white hover-effect rounded shadow-md hover:shadow-xl">
+        <div class="flex items-center hover:bg-gray-200 transition-colors duration-200 bg-gray-100 rounded border-b-2 border-gray-200 p-2">
+         <div class="flex justify-between items-center w-full">
+          <a href="{{ post.author.get_absolute_url }}" class="flex items-center cursor-pointer latest-user">
+           {% if post.author.profile_picture %}
+           <img alt="Profile picture of {{ post.author }}" class="w-12 h-12 rounded-full mr-4 latest-user-img" height="50" src="{{ post.author.profile_picture.url }}" width="50"/>
+           {% else %}
+           <img alt="Profile picture of user 1" class="w-12 h-12 rounded-full mr-4 latest-user-img" height="50" src="{% static '/no-profile-pic.png' %}" width="50"/>
+           {% endif %}
+           <div class="flex flex-col">
+            <div class="font-bold text-blue-900 latest-user-name">
+             {% if post.author.first_name and post.author.last_name %}
+              {{ post.author.first_name }} {{ post.author.last_name }}
+             {% else %}
+              {{ post.author.username|remove_special_chars }}
+             {% endif %}
+            </div>
+            <div class="text-blue-500 latest-username">
+             @{{ post.author.username }}
+            </div>
+           </div>
+          </a>
+          <div class="button-liked-post">
+            {% if is_following %}
+            <button onclick="followUnfollow(this, '{{ post.author.username }}')" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700 follow-button-{{ post.author.username }}">
+             <i class="fa-solid fa-user-check"></i>
+             <span>Following</span>
+            </button>
+            {% else %}
+            {% if request.user == post.author%}
+            <button onclick="settingsUrl()" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700">
+              <i class="fa-solid fa-cog"></i>
+              <span>Settings</span>
+            </button>
+            {% else %}
+            <button onclick="followUnfollow(this, '{{ post.author.username }}')" class="text-blue-500 px-2 py-1 rounded-md transition-color duration-300 hover:text-blue-700 follow-button-{{ post.author.username }} ">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Follow</span>
+            </button>
+            {% endif %}
+            {% endif %}
+          </div>
+         </div>
+        </div>
+        <div onclick="RedirectToUrl('{{ post.get_absolute_url }}')" class="p-4 cursor-pointer hover:bg-gray-200 transition-color duration-200">
+          <div class="my-4">
+            <h2 class="text-xl font-bold text-blue-900">
+              {{ post.title }}.
+            </h2>
+           <p class="text-gray-700">
+            {{ post.get_limited_content|safe}}
+           </p>
+          </div>
+          {% if post.thumbnail %}
+          <img alt="Thumbnail image for {{ post.title }}" class="w-full h-64 rounded" height="200" src="{{ post.thumbnail.url }}" width="300"/>
+          {% endif %}
+        </div>
+       </div>
+       {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-3xl px-4 py-12 text-blue-800 text-center flex justify-center items-center bg-white shadow-lg rounded-lg">
+        <span>No Liked Posts Available.</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <!-- Footer -->
+  {% include "footer.html" %}
+  <script>
+    document
+      .getElementById("logout-button")
+      .addEventListener("click", function () {
+        // Redirect to the logout URL
+        window.location.href = "{% url 'logout' %}"; // Ensure 'logout' matches your logout URL name
+      });
+  </script>
+</div>
+{% endblock %}

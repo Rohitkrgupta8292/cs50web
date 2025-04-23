@@ -1,0 +1,79 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %}
+{% block title %} {{ request.user.username}}'s Create a Post - TImber {% endblock %} 
+{% block content %}
+<div class="flex flex-col justify-between min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+  <!-- Header -->
+  {% include "header.html" %}
+  {% if messages %}
+    <div class="alert alert-container text-center font-bold shake fixed top-4 right-4 z-50">
+      {% for message in messages %} {% if message.tags == 'success' %}
+      <div class="alert-success p-3 m-3 bg-green-300 text-green-900 rounded-lg shadow-lg">
+        {{ message }}
+      </div>
+      {% elif message.tags == 'error' %}
+      <div class="alert-error p-3 m-3 bg-red-300 text-red-900 rounded-lg shadow-lg">
+        {{ message }}
+      </div>
+      {% elif message.tags == 'info' %}
+      <div class="alert-error p-3 m-3 bg-blue-300 text-blue-900 rounded-lg shadow-lg">
+        {{ message }}
+      </div>
+      {% endif %} {% endfor %}
+    </div>
+  {% endif %}
+  <div class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    <div class="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:shadow-2xl">
+        <div class="flex items-center">
+           <i onclick="goBack()" class="fa-solid fa-arrow-left-long text-2xl mr-1 cursor-pointer hover:text-blue-600 text-blue-900">
+           </i>
+           <h1 class="text-3xl font-bold text-blue-900">Create a New Post</h1>
+        </div>
+        <div class="border-b-4 border-blue-500 w-24 mb-4">
+        </div>
+        <form action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+            <div class="mb-4">
+                <label for="title" class="block text-lg text-gray-700 mb-2">Title<span class="text-red-600">*</span><sup class="text-gray-500 text-[12px]">Don't put fullstop</sup></label>
+                <input type="text" id="title" name="title" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" maxlength="200" placeholder="Enter Title for your post" required>
+            </div>
+            <div class="mb-4">
+                <label for="content" class="block text-gray-700 text-lg mb-2">Content<span class="text-red-600">*</span></label>
+                <textarea id="content" name="content" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter Content for your post" rows="10">{% if post.content %} {{ post.content|safe }}{% endif %}</textarea>
+            </div>
+            <div class="mb-4">
+                <label for="category" class="block text-gray-700 mb-2">Category<sup class="text-red-500 text-[12px]"> Add category if not there before filling any content.</sup></label>
+                <div class="flex items-center">
+                    <select id="category" name="category" placeholder="Select a category" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option  value="">Select a Category</option>
+                        {% if categories %}
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                        {% endif %}
+                    </select>
+                    <button type="button" id="add-category-button" class="ml-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">Add</button>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="tags" class="block text-gray-700 mb-2">Tags</label>
+                <div id="tags-container" class="flex flex-wrap mb-2"></div>
+                <input type="hidden" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="hidden" id="tags-hidden" name="tags">
+                <input type="text" id="tags" name="tags-input" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Press space to add tags">
+            </div>
+            <div class="mb-4">
+                <label for="thumbnail" class="block text-gray-700 mb-2">Thumbnail<span class="text-red-600">*</span></label>
+                <div class="relative mb-2">
+                    <img id="thumbnail-preview" src="{% static "/upload-image.webp" %}" alt="Default thumbnail preview with text '300x300 Thumbnail Preview'" class="w-full h-48 object-cover rounded-lg border border-gray-300">
+                    <input type="file" id="thumbnail" name="thumbnail" class="w-[230px] absolute top-4 right-4 cursor-pointer bg-purple-200 rounded-full shadow-lg hover:bg-purple-100 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" required>
+                </div>
+                <p class="text-gray-500 text-sm mt-2">Recommended size: 1200x400 pixels. Max size: 2MB.</p>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-purple-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">Create Post</button>
+            </div>
+        </form>
+    </div>
+  </div> 
+  {% include "footer.html" %}
+</div>
+{% endblock %}
