@@ -1,0 +1,248 @@
+<html>
+<head>
+    <title>Timber</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        .btn-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-signup:hover {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .btn-login:hover {
+            background-color: white;
+            color: #1e3a8a; /* Tailwind's blue-900 color */
+        }
+        .shadow-box {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .blog-tile:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function showLoginMessage() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+    </script>
+</head>
+<body class="bg-blue-900 text-white flex flex-col justify-between min-h-screen">
+    <header class="flex justify-between items-center p-6">
+        <div class="text-2xl font-bold">Timber</div>
+        <div class="space-x-4">
+            <button class="bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-signup">Sign Up</button>
+            <button class="border border-white text-white font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-login">Login</button>
+        </div>
+    </header>
+    <main class="flex-grow flex flex-col justify-center items-center shadow-box p-8 rounded-lg">
+        <h1 class="text-4xl font-bold mb-4 text-center">Welcome to Timber</h1>
+        <p class="text-lg mb-8 text-center">Get started with your blogging journey today!</p>
+        <button class="bg-white text-blue-900 font-semibold py-2 px-6 rounded-full transition-transform duration-300 btn-hover">Get Started</button>
+    </main>
+    <section class="bg-white text-blue-900 p-8">
+        <h2 class="text-3xl font-bold mb-6 text-center">Featured Blogs</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Blog Post 1 -->
+            <div class="bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto">
+                <img alt="Blog image 1" class="w-full h-40 object-cover rounded-t-lg" src="https://storage.googleapis.com/a1aa/image/CIwYAXWap1J4CBuHNNi1LIhZtawrZX3Hheka15P69be7tx6TA.jpg"/>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-2">Blog Title 1</h3>
+                    <p class="text-lg mb-4">A brief description of the blog content goes here. It should be engaging and informative.</p>
+                    <div class="flex items-center mb-4">
+                        <img alt="Author profile picture" class="w-10 h-10 rounded-full mr-4" src="https://storage.googleapis.com/a1aa/image/eIfVEOnkCunVWURaRwX6LNaCGex0k7TvwBBwfFgLM9Z8FHrPB.jpg"/>
+                        <div>
+                            <p class="font-bold">Author Name</p>
+                            <p class="text-sm">@username</p>
+                        </div>
+                        <button class="ml-auto bg-blue-900 text-white py-1 px-3 rounded-full" onclick="showLoginMessage()">Follow</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-heart"></i> Like</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-comment"></i> Comment</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Blog Post 2 -->
+            <div class="bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto">
+                <img alt="Blog image 2" class="w-full h-40 object-cover rounded-t-lg" src="https://storage.googleapis.com/a1aa/image/F4YW1kGFONYeU60BiZ34l5CAYHPjyB2C12xtguN5D3e6tx6TA.jpg"/>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-2">Blog Title 2</h3>
+                    <p class="text-lg mb-4">A brief description of the blog content goes here. It should be engaging and informative.</p>
+                    <div class="flex items-center mb-4">
+                        <img alt="Author profile picture" class="w-10 h-10 rounded-full mr-4" src="https://storage.googleapis.com/a1aa/image/eIfVEOnkCunVWURaRwX6LNaCGex0k7TvwBBwfFgLM9Z8FHrPB.jpg"/>
+                        <div>
+                            <p class="font-bold">Author Name</p>
+                            <p class="text-sm">@username</p>
+                        </div>
+                        <button class="ml-auto bg-blue-900 text-white py-1 px-3 rounded-full" onclick="showLoginMessage()">Follow</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-heart"></i> Like</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-comment"></i> Comment</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Blog Post 3 -->
+            <div class="bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto">
+                <img alt="Blog image 3" class="w-full h-40 object-cover rounded-t-lg" src="https://storage.googleapis.com/a1aa/image/APF4SRh1t0KLNRRc35iLU2iX4Rfa4I4l8YenYMdRX0U5tx6TA.jpg"/>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-2">Blog Title 3</h3>
+                    <p class="text-lg mb-4">A brief description of the blog content goes here. It should be engaging and informative.</p>
+                    <div class="flex items-center mb-4">
+                        <img alt="Author profile picture" class="w-10 h-10 rounded-full mr-4" src="https://storage.googleapis.com/a1aa/image/eIfVEOnkCunVWURaRwX6LNaCGex0k7TvwBBwfFgLM9Z8FHrPB.jpg"/>
+                        <div>
+                            <p class="font-bold">Author Name</p>
+                            <p class="text-sm">@username</p>
+                        </div>
+                        <button class="ml-auto bg-blue-900 text-white py-1 px-3 rounded-full" onclick="showLoginMessage()">Follow</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-heart"></i> Like</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-comment"></i> Comment</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Blog Post 4 -->
+            <div class="bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto">
+                <img alt="Blog image 4" class="w-full h-40 object-cover rounded-t-lg" src="https://storage.googleapis.com/a1aa/image/JnilNwzSOW4BCJTPL6Zy13btaIV477fvMe5jNNHaizEixx6TA.jpg"/>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-2">Blog Title 4</h3>
+                    <p class="text-lg mb-4">A brief description of the blog content goes here. It should be engaging and informative.</p>
+                    <div class="flex items-center mb-4">
+                        <img alt="Author profile picture" class="w-10 h-10 rounded-full mr-4" src="https://storage.googleapis.com/a1aa/image/eIfVEOnkCunVWURaRwX6LNaCGex0k7TvwBBwfFgLM9Z8FHrPB.jpg"/>
+                        <div>
+                            <p class="font-bold">Author Name</p>
+                            <p class="text-sm">@username</p>
+                        </div>
+                        <button class="ml-auto bg-blue-900 text-white py-1 px-3 rounded-full" onclick="showLoginMessage()">Follow</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-heart"></i> Like</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-comment"></i> Comment</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Blog Post 5 -->
+            <div class="bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto">
+                <img alt="Blog image 5" class="w-full h-40 object-cover rounded-t-lg" src="https://storage.googleapis.com/a1aa/image/eZhkz0DODd3BY6HpMn5ADWGTkqJ1fW628hWSLieOw1TBjj1nA.jpg"/>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-2">Blog Title 5</h3>
+                    <p class="text-lg mb-4">A brief description of the blog content goes here. It should be engaging and informative.</p>
+                    <div class="flex items-center mb-4">
+                        <img alt="Author profile picture" class="w-10 h-10 rounded-full mr-4" src="https://storage.googleapis.com/a1aa/image/eIfVEOnkCunVWURaRwX6LNaCGex0k7TvwBBwfFgLM9Z8FHrPB.jpg"/>
+                        <div>
+                            <p class="font-bold">Author Name</p>
+                            <p class="text-sm">@username</p>
+                        </div>
+                        <button class="ml-auto bg-blue-900 text-white py-1 px-3 rounded-full" onclick="showLoginMessage()">Follow</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-heart"></i> Like</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-comment"></i> Comment</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Blog Post 6 -->
+            <div class="bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto">
+                <img alt="Blog image 6" class="w-full h-40 object-cover rounded-t-lg" src="https://storage.googleapis.com/a1aa/image/NFUboUraOp5gM9DrVrMebAXatYY2nSETxHgOaVtVUfTeij1nA.jpg"/>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-2">Blog Title 6</h3>
+                    <p class="text-lg mb-4">A brief description of the blog content goes here. It should be engaging and informative.</p>
+                    <div class="flex items-center mb-4">
+                        <img alt="Author profile picture" class="w-10 h-10 rounded-full mr-4" src="https://storage.googleapis.com/a1aa/image/eIfVEOnkCunVWURaRwX6LNaCGex0k7TvwBBwfFgLM9Z8FHrPB.jpg"/>
+                        <div>
+                            <p class="font-bold">Author Name</p>
+                            <p class="text-sm">@username</p>
+                        </div>
+                        <button class="ml-auto bg-blue-900 text-white py-1 px-3 rounded-full" onclick="showLoginMessage()">Follow</button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-heart"></i> Like</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-comment"></i> Comment</button>
+                            <button class="text-blue-900" onclick="showLoginMessage()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-blue-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="hover:underline">Privacy Policy</a>
+                <a href="#" class="hover:underline">Terms and Conditions</a>
+                <a href="#" class="hover:underline">About</a>
+            </div>
+            <p>&copy; 2023 Timber. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Please Login</h2>
+            <p class="text-lg mb-4">You need to login to perform this action.</p>
+            <button class="bg-blue-900 text-white py-2 px-4 rounded-full" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</body>
+</html>

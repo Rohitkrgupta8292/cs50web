@@ -52,6 +52,10 @@
             <i class="fas fa-tachometer-alt mr-2"> </i>
             <span class="flex-1"> Dashboard </span>
           </div>
+          {% comment %} <a href="{% url 'chat_room' request.user.username %}" class="flex transition-colors items-center text-xl {% if sidebar_active_chat_room %} bg-gray-200 {% endif %} hover:bg-gray-200 p-2 w-full hoverable">
+            <i class="fa-solid fa-message mr-2"></i>
+            <span class="flex-1"> Messages </span>
+          </a> {% endcomment %}
           <a href="{% url 'user_activity' %}" class="flex transition-colors items-center text-xl {% if sidebar_active_activity %} bg-gray-200 {% endif %} hover:bg-gray-200 p-2 w-full">
             <i class="fas fa-bolt mr-2"> </i>
             <span class="flex-1"> Activity </span>

@@ -1,5 +1,5 @@
 # from datetime import datetime
-from django.contrib.admin.models import LogEntry
+# from django.contrib.admin.models import LogEntry
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -175,12 +175,6 @@ def home(request):
             is_following_liked.append(is_following(request, post.author.username))
         # zip liked_posts with is_following_liked
         liked_posts_with_is_following = zip(liked_posts, is_following_liked)
-        # check following post author is followed by user or not and add in a list
-        # is_following_following = []
-        # for post in following_posts:
-        #     is_following_following.append(is_following(request, post.author.username))
-        # # zip following_posts with is_following_following
-        # following_posts_with_is_following = zip(following_posts, is_following_following)
 
         return render(
             request, "home_login.html", {"current_year": current_year, "sidebar_active_home": sidebar_active_home, "latest_posts": latest_posts, "following_posts": following_posts, "liked_posts": liked_posts, "latest_posts_with_is_following": latest_posts_with_is_following, "liked_posts_with_is_following": liked_posts_with_is_following}

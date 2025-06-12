@@ -1,0 +1,56 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-gradient-to-b from-blue-100 to-white flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div class="flex justify-between items-center mb-6">
+            <i class="fas fa-home text-2xl"></i>
+            <i class="fas fa-sync-alt text-2xl"></i>
+        </div>
+        <div class="flex justify-center mb-6">
+            <img alt="Blog logo" class="w-24 h-24" height="100" src="https://storage.googleapis.com/a1aa/image/ZS6bmfQQAgQ0dCzKnaXcmdLSWNkwstevQgq6ogm05Ofk3txnA.jpg" width="100"/>
+        </div> 
+        <h2 class="text-2xl font-bold text-center mb-6">Login to Your Account</h2>
+        <form>
+            <div class="mb-4">
+                <label class="block text-gray-700" for="email">Email or Username: <span class="text-red-500">*</span></label>
+                <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="email" placeholder="Enter your Username or Email" required type="text"/>
+            </div>
+            <div class="mb-4 relative">
+                <label class="block text-gray-700" for="password">Password: <span class="text-red-500">*</span></label>
+                <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="password" placeholder="Enter your Password" required type="password"/>
+                <i class="fas fa-eye absolute right-3 top-10 text-gray-500"></i>
+            </div>
+            <div class="flex items-center justify-between mb-6">
+                <label class="flex items-center">
+                    <input class="form-checkbox" type="checkbox"/>
+                    <span class="ml-2 text-gray-700">Remember me</span>
+                </label>
+                <a class="text-blue-500" href="#">Forgot password?</a>
+            </div>
+            <button class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-200" type="submit">Login</button>
+        </form>
+        <p class="text-center mt-6 text-gray-700">Don't have an account? <a class="text-blue-500" href="#">Signup</a></p>
+        <div class="flex items-center justify-center mt-6">
+            <div class="border-t border-gray-300 flex-grow mr-3"></div>
+            <span class="text-gray-500">or</span>
+            <div class="border-t border-gray-300 flex-grow ml-3"></div>
+        </div>
+        <div class="flex flex-col space-y-4 mt-6">
+            <button class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100 transition duration-200">
+                <img src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" alt="Google logo" class="w-5 h-5 mr-2">
+                <span class="text-gray-700 font-bold">Continue with Google</span>
+            </button>
+            <button class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100 transition duration-200">
+                <i class="fab fa-github text-gray-700 mr-2"></i>
+                <span class="text-gray-700 font-bold">Continue with GitHub</span>
+            </button>
+        </div>
+    </div>
+</body>
+</html>
