@@ -24,10 +24,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
       rel="stylesheet"
     />
-    {% comment %} <script
-      src="https://kit.fontawesome.com/80c2332804.js"
-      crossorigin="anonymous"
-    ></script>  {% endcomment %}
     {% compress css %}
     <link rel="stylesheet" href="{% static 'src/output.css' %}" />
     {% endcompress %}
@@ -52,10 +48,6 @@
             <i class="fas fa-tachometer-alt mr-2"> </i>
             <span class="flex-1"> Dashboard </span>
           </div>
-          {% comment %} <a href="{% url 'chat_room' request.user.username %}" class="flex transition-colors items-center text-xl {% if sidebar_active_chat_room %} bg-gray-200 {% endif %} hover:bg-gray-200 p-2 w-full hoverable">
-            <i class="fa-solid fa-message mr-2"></i>
-            <span class="flex-1"> Messages </span>
-          </a> {% endcomment %}
           <a href="{% url 'user_activity' %}" class="flex transition-colors items-center text-xl {% if sidebar_active_activity %} bg-gray-200 {% endif %} hover:bg-gray-200 p-2 w-full">
             <i class="fas fa-bolt mr-2"> </i>
             <span class="flex-1"> Activity </span>
@@ -175,7 +167,6 @@
               onclick="toggleDropdownMenu()"
             >
               <i class="fas fa-user mr-2"> </i>
-              {% comment %} <span class="flex-1"> Account </span> {% endcomment %}
               <i class="fas fa-chevron-down text-sm" id="accountArrowMenu"> </i>
             </div>
             <div
@@ -354,7 +345,7 @@
     </div>
     {% if request.user.is_authenticated %}
     <div id="sidebarModal" class="modal">
-      <div id="sidebar" class="flex bg-white flex-col rounded-lg shadow-md justify-between items-center w-[360px] border-r border-gray-500 fixed top-0 min-h-screen transition-transform duration-200 ease-in-out hide"> 
+      <div id="sidebar" class="flex bg-white flex-col rounded-lg shadow-md justify-between items-center w-[90%] max-w-[360px] border-r border-gray-500 fixed top-0 min-h-screen transition-transform duration-200 ease-in-out hide"> 
         <div class="flex text-blue-900 flex-col items-center w-full mt-6 ">
           <div class="flex justify-between items-center w-full px-4 mb-8">
             <div onclick="homeRedirect()"
@@ -415,35 +406,37 @@
                 <span class="flex-1"> Logout </span>
                 <i class="fa-solid fa-right-from-bracket mr-1"></i>
               </div>
-              <div onclick="RedirectToUrl({% url 'user_profile' request.user.username %})" class="flex transition-colors items-center p-2 hover:bg-gray-300 hoverable {% if sidebar_active_user %} bg-gray-300 {% endif %}">
-                {% if request.user.profile_picture %}
-                <img
-                  alt="{{ request.user.profile_picture }}'s image"
-                  class="rounded-full mr-2 h-10 w-10"
-                  src="{{ request.user.profile_picture.url }}"
-                  width="40"
-                  height="40"
-                />
-                {% else %}
-                <img
-                  alt="Profile Picture"
-                  class="rounded-full mr-2 h-10 w-10"
-                  src="{% static '/no-profile-pic.png' %}"
-                  width="40"
-                  height="40"
-                />
-                {% endif %}
-                <div>
-                  <div class="font-bold">
-                    {% if request.user.first_name and request.user.last_name %}
-                    {{ request.user.first_name }} {{ request.user.last_name }}
-                    {% else %}
-                    {{ request.user.username|remove_special_chars }}
-                    {% endif %}
+              <a href="{% url 'user_profile' request.user.username %}">
+                <div class="flex transition-colors items-center p-2 hover:bg-gray-300 hoverable {% if sidebar_active_user %} bg-gray-300 {% endif %}">
+                  {% if request.user.profile_picture %}
+                  <img
+                    alt="{{ request.user.profile_picture }}'s image"
+                    class="rounded-full mr-2 h-10 w-10"
+                    src="{{ request.user.profile_picture.url }}"
+                    width="40"
+                    height="40"
+                  />
+                  {% else %}
+                  <img
+                    alt="Profile Picture"
+                    class="rounded-full mr-2 h-10 w-10"
+                    src="{% static '/no-profile-pic.png' %}"
+                    width="40"
+                    height="40"
+                  />
+                  {% endif %}
+                  <div>
+                    <div class="font-bold">
+                      {% if request.user.first_name and request.user.last_name %}
+                      {{ request.user.first_name }} {{ request.user.last_name }}
+                      {% else %}
+                      {{ request.user.username|remove_special_chars }}
+                      {% endif %}
+                    </div>
+                    <div class="text-sm underline">@{{ request.user.username }}</div>
                   </div>
-                  <div class="text-sm underline">@{{ request.user.username }}</div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
           <a href="{% url 'settings' %}" class="flex transition-colors items-center text-xl hover:bg-gray-200 p-2 w-full {% if sidebar_active_settings %} bg-gray-200 {% endif %}">
@@ -451,7 +444,7 @@
             <span class="flex-1"> Settings </span>
           </a>
         </div>
-        <div onclick="create_post_URL()" class="flex items-center space-x-2 bg-blue-500 text-white py-2 px-4 rounded-full w-10/12 justify-center hover:bg-blue-600 mx-4 mb-4 hoverable">
+        <div onclick="create_post_URL()" class="flex items-center space-x-2 bg-blue-500 text-white py-2 px-4 rounded-full w-10/12 justify-center hover:bg-blue-600 mx-4 mb-28 hoverable">
           <i class="fa-solid fa-pen-to-square"></i>
           <span> Create </span>
         </div>
@@ -738,7 +731,7 @@
     </div>
     <!--Category model-->
     <div id="category-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 class="text-xl font-bold text-blue-900 mb-4">Add New Category</h2>
           <form method="post" action="{% url 'add_category' %}">
             {% csrf_token %}

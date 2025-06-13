@@ -729,6 +729,10 @@ video {
   margin-bottom: 0.5rem;
 }
 
+.mb-28 {
+  margin-bottom: 7rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -1053,10 +1057,6 @@ video {
   width: 35%;
 }
 
-.w-\[360px\] {
-  width: 360px;
-}
-
 .w-\[39\.2px\] {
   width: 39.2px;
 }
@@ -1092,6 +1092,10 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.max-w-\[360px\] {
+  max-width: 360px;
 }
 
 .max-w-md {
@@ -2207,10 +2211,10 @@ html {
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: 75% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  /* width: 80%; */
   max-width: 400px;
   border-radius: 10px;
   text-align: center;
