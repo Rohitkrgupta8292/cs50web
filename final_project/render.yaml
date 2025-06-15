@@ -1,0 +1,22 @@
+databases:
+  - name: blogdb
+    plan: free
+
+services:
+  - type: web
+    name: rohit-blog
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn final_project.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: blogdb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "rohit-blog.onrender.com"
