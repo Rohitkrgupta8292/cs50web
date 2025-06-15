@@ -1,0 +1,9 @@
+Django>=3.2
+gunicorn
+psycopg2-binary
+dj-database-url
+whitenoise[brotil]
+django-tinymce
+django-imagekit
+djangorestframework
+django-compressor
