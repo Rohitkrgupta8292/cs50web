@@ -1,6 +1,6 @@
 ![Final Project](./static/timber.png)
 
-### [Video Demo](https://youtu.be/0FZaUhoUUcw)
+### [Video Demo](https://www.youtube.com/watch?v=nIerhgwcPNk)
 
 # Socially Integrated Blogging Platform
 
