@@ -28,33 +28,33 @@ This platform allows users to register (via Google or email), create blog posts 
 
 Below is an overview of the main files and directories in the project:
 
-- `final_project/`
-  - `final_project/` – Main Django settings directory
-    - `settings.py` – Environment-based settings configuration using `django-environ`
-    - `urls.py` – URL configuration for the project
-    - `wsgi.py/asgi.py` – Interfaces for deployment
+- `capstone/`
   - `blog/` – Core app containing models and views for the blog
     - `models.py` – Models for Post, Profile, Comment, Like
     - `views.py` – Handles post creation, profile management, interaction logic
     - `forms.py` – Django forms for user input
     - `urls.py` – App-specific URL routing
-    - `templates/blog/` – HTML templates for blog layout
-    - `static/blog/` – JavaScript (AJAX), CSS, and images
-  - `accounts/` – Handles user authentication
-    - `views.py` – Google OAuth2 login logic and social auth callback
-    - `urls.py` – Authentication routes
-  - `chat/` – (Optional) Real-time chat system
+  - `final_project/` – Main Django settings directory
+    - `settings.py` – Environment-based settings configuration using `django-environ`
+    - `urls.py` – URL configuration for the project
+    - `wsgi.py/asgi.py` – Interfaces for deployment
   - `media/` – Stores uploaded images
-- `requirements.txt` – Python package requirements
-- `.env` – Contains secret keys and environment settings (excluded from Git)
-- `README.md` – This documentation file
+  - `static/` – Stores CSS and uploaded images
+  - `templates/` – Stores HTML pages
+  - `db.sqlite3/` – Stores Database
+  - `manage.py/` – To run the command
+  - `package-lock.json/` – for tailwindcss dependencies
+  - `package.json/` – for tailwindcss dependencies
+  - `README.md` – This documentation file
+  - `requirements.txt` – Python package requirements
+  - `tailwind.config.js` – Tailwindcss configurtion
 
 ## How to Run the Application
 
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/Rohitkrgupta8292/cs50web.git
-   cd cs50web/final_project
+   cd cs50web/capstone
 
 2. **Create a virtual environment and activate it**:
    ```bash
@@ -73,7 +73,7 @@ Below is an overview of the main files and directories in the project:
    GOOGLE_CLIENT_SECRET = 'your-google-client-secret'
    GOOGLE_CALLBACK_URL = 'http://127.0.0.1:8000/accounts/google/callback/'
    SECRET_KEY = 'your-django-secret-key'
-   DEBUG = 
+   DEBUG = True
    
 5. **Run database migrations**:
    ```bash
