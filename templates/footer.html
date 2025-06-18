@@ -1,0 +1,19 @@
+{% load static %} {% load my_filters %}
+<footer class="font lg:hidden bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+</footer>

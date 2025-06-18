@@ -1,0 +1,16 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %}
+{% block title %} 404 page - TImber {% endblock %} 
+{% block content %}
+<div class="flex flex-col justify-between min-h-screen {% if user.is_authenticated %} lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72 {% endif %}">
+    <!-- Header -->
+  {% include "header.html" %}
+  <div class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    <div class="flex flex-col items-center justify-center h-full">
+      <h1 class="text-4xl font-bold text-gray-800 mb-4 text-center">404 - Page Not Found</h1>
+      <p class="text-lg text-gray-600 mb-6 text-center">Sorry, the page you are looking for does not exist.</p>
+      <a href="{% url 'home' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">Go to Home</a>
+    </div>
+  </div>
+  {% include "footer.html" %}
+</div>
+{% endblock %}

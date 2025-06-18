@@ -1,0 +1,394 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %}
+{% block title %} {{ request.user.username}}'s Settings - TImber {% endblock %} 
+{% block content %}
+<div class="flex flex-col justify-between min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+  <!-- Header -->
+  {% include "header.html" %}
+  {% comment %} <header class="font lg:hidden head flex justify-between items-center p-3 h-16">
+    <div onclick="showSidebarModel()" class="text-white text-xl p-1 btn-hover transition-transform duration-300 w-7">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="logo" class="w-32 btn-hover transition-transform duration-300">
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div id="search-div" class="hidden relative px-4 w-full">
+      <i class="fas fa-search absolute left-7 top-3 text-blue-900">
+      </i>
+      <input id="search-input" class="p-2 pl-9 focus:outline-none focus:ring-4 focus:ring-blue-400 w-full rounded-2xl text-blue-900" placeholder="Search" type="text"/>
+    </div>
+    <div class="p-1 text-white text-xl btn-hover transition-transform duration-300 w-7">
+      <i id="search-icon" onclick="toggleSearch()" class="fa-solid fa-magnifying-glass"></i>
+      <i id="close-icon" onclick="toggleSearch()" class="fa-solid fa-xmark hidden"></i>
+     </div>
+  </header> {% endcomment %}
+  {% if messages %}
+    <div class="alert alert-container text-center font-bold shake fixed top-4 right-4 z-50">
+      {% for message in messages %} {% if message.tags == 'success' %}
+      <div class="alert-success p-3 m-3 bg-green-300 text-green-900 rounded-lg shadow-lg">
+        {{ message }}
+      </div>
+      {% elif message.tags == 'error' %}
+      <div class="alert-error p-3 m-3 bg-red-300 text-red-900 rounded-lg shadow-lg">
+        {{ message }}
+      </div>
+      {% elif message.tags == 'info' %}
+      <div class="alert-error p-3 m-3 bg-blue-300 text-blue-900 rounded-lg shadow-lg">
+        {{ message }}
+      </div>
+      {% endif %} {% endfor %}
+    </div>
+  {% endif %}
+  <div class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+   <div class="flex items-center">
+     <i onclick="goBack()" class="fa-solid fa-arrow-left-long text-2xl mr-1 cursor-pointer hover:text-blue-600 text-blue-900">
+     </i>
+     <h1 class="sm:text-2xl text-xl text-blue-900 font-semibold">
+       Settings
+     </h1>
+   </div>
+   <div class="border-b-4 border-blue-500 w-24 mb-4">
+   </div>
+   <!-- Tabs -->
+   <div class="tab bg-white mb-4 text-blue-900">
+    <button class="tablinks tabButton w-[35%]" id="defaultOpen" onclick="openTab(event, 'GeneralSettings')">
+     General Settings
+    </button>
+    <button class="tablinks tabButton w-[25%]" onclick="openTab(event, 'SocialLinks')">
+     Social Links
+    </button>
+    <button class="tablinks tabButton w-[40%]" onclick="openTab(event, 'AdvancedSettings')">
+     Advanced Settings
+    </button>
+   </div>
+   <!-- General Settings Tab -->
+   <div class="tabcontent" id="GeneralSettings">
+    <!-- Profile Banner -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <form id="profile-banner-form" method="post" enctype="multipart/form-data" action="{% url 'update_profile_banner_image' %}?tab=GeneralSettings" name="images">
+        {% csrf_token %}
+        <div class="relative">
+         <img id="banner-image" alt="Profile background" class="w-full h-48 object-cover rounded-lg" height="300" src="{% if user.banner_image %} {{ user.banner_image.url }} {% else %} {% static '/upload-image.webp' %} {% endif %}" width="1200"/>
+         <div class="absolute top-4 right-4 flex items-center">
+          <input onchange="previewBannerImage()" oninput="checkInputFields()" class="block cursor-pointer bg-purple-200 rounded-full w-full hover:bg-purple-100 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" id="banner-input" type="file" name="banner_image"/>
+          <button class="ml-2 bg-red-600 text-white px-2 py-1 rounded-md text-sm" id="deleteBannerButton" onclick="openDeleteModal('deleteBannerModal')" type="button">
+            <i class="fas fa-trash"></i>    
+          </button>
+         </div>
+         <div class="flex items-center mt-4">
+          <img id="profile-image" alt="Profile picture" class="w-24 h-24 rounded-full border-4 border-white" height="100" src="{% if user.profile_picture %} {{ user.profile_picture.url }} {% else %} {% static '/upload-pic.webp' %} {% endif %}" width="100"/>
+          <div class="ml-4 flex items-center">
+           <input onchange="previewProfileImage()" oninput="checkInputFields()" class="block w-full bg-purple-200 hover:bg-purple-100 cursor-pointer rounded-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" id="profile-input" type="file" name="profile_picture"/>
+           <button class="ml-2 bg-red-600 text-white px-2 py-1 rounded-md text-sm" id="deleteProfileButton"  onclick="openDeleteModal('deleteProfileModal')" type="button">
+            <i class="fas fa-trash"></i>    
+           </button>
+          </div>
+         </div>
+         <div class="flex justify-end mt-4">
+         <button class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-md" disabled id="imageSaveButton" type="submit">
+          Save changes
+         </button>
+         </div>
+        </div>
+      </form>
+    </div>
+    <!-- Account Settings -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+     <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-blue-900">
+       Account Settings
+      </h3>
+      <button class="text-gray-500 hover:text-gray-700" onclick="toggleEdit()">
+       <i class="fas fa-edit">
+       </i>
+      </button>
+     </div>
+     <p class="text-gray-500 mb-6">
+      Here you can change your account information
+     </p>
+     <form class="account-info" method="post" action="{% url 'update_user_info' %}?tab=GeneralSettings" name="account">
+      {% csrf_token %}
+      <div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                  <label for="username" class="block text-gray-700">
+                      Username<span class="text-red-600">*</span>
+                  </label>
+                  <input class="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" disabled type="text" name="username" value="{{ user.username }}" required/>
+              </div>
+              <div>
+                  <label for="email" class="block text-gray-700">
+                      Email Address<span class="text-red-600">*</span><span class="text-[14px] text-gray-500"> Email isn't editable</span>
+                  </label>
+                  <input class="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" disabled type="email" value="{{ user.email }}" required/>
+              </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                  <label for="first_name" class="block text-gray-700">
+                      First Name<span class="text-red-600">*</span>
+                  </label>
+                  <input class="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" disabled placeholder="First Name" type="text" name="first_name" value="{{ user.first_name }}" required/>
+              </div>
+              <div>
+                  <label for="last_name" class="block text-gray-700">
+                      Last Name<span class="text-red-600">*</span>
+                  </label>
+                  <input class="w-full mt-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" disabled placeholder="Last Name" type="text" name="last_name" value="{{ user.last_name }}" required/>
+              </div>
+          </div>
+          <div class="mb-4">
+              <label for="bio" class="block text-gray-700">
+                  About Me
+              </label>
+               <textarea id="non-text" class="w-full mt-1 p-2 border rounded-md scrollbar-thin focus:outline-none focus:ring-2 focus:ring-purple-500" disabled placeholder="Tell something about yourself!" rows="6">{% if user.bio %}{{ user.bio|safe|striptags }}{% endif %}</textarea>
+              <textarea id="bio" style="display:none" class="textarea w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="10" disabled name="bio">{% if user.bio %}{{ user.bio|safe }}{% endif %}</textarea>
+          </div>
+          <div class="flex justify-end">
+              <button class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-md" disabled id="saveButton" type="submit">
+                  Save changes
+              </button>
+          </div>
+      </div>
+     </form>
+    </div>
+   </div>
+   <!-- Social Links Tab -->
+   <div class="tabcontent" id="SocialLinks">
+    <!-- Social Profiles -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+     <h3 class="text-xl font-semibold mb-4 text-blue-900">
+      Social Profiles
+     </h3>
+     <p class="text-gray-500 mb-6">
+      Here you can set your social profiles
+     </p>
+     <form class="social_links" method="post" action="{% url 'save_social_links' %}?tab=SocialLinks" name="social_links">
+      {% csrf_token %}
+      <div class="space-y-4">
+       <!-- Twitter -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-twitter text-blue-600 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-500" disabled id="twitterInput" placeholder="https://x.com/username" type="text" value="{{ social_media_dict.twitter }}" name="twitter"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('twitterInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteTwitterModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- linkedin -->
+       <div class="flex items-center space-x-4">
+         <i class="fab fa-linkedin text-blue-600 w-6">:</i>
+         <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="linkedInInput" placeholder="https://www.linkedin.com/username" type="text" value="{{ social_media_dict.linkedin }}" name="linkedin"/>
+         <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('linkedInInput', 'socialSaveButton')" type="button">
+          <i class="fas fa-edit">
+          </i>
+         </button>
+         <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteLinkedInModal')" type="button">
+          <i class="fas fa-trash">
+          </i>
+         </button>
+       </div>
+       <!-- Facebook -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-facebook text-blue-700 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="facebookInput" placeholder="https://www.facebook.com/username" type="text" value="{{ social_media_dict.facebook }}" name="facebook"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('facebookInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteFacebookModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- Instagram -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-instagram text-pink-700 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="instagramInput" placeholder="https://www.instagram.com/username" type="text" value="{{ social_media_dict.instagram }}" name="instagram"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('instagramInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteInstagramModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- Snapchat -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-snapchat text-yellow-500 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="snapchatInput" placeholder="https://www.snapchat.com/username" type="text" value="{{ social_media_dict.snapchat }}" name="snapchat"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('snapchatInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteSnapchatModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- Youtube -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-youtube text-red-600 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="youtubeInput" placeholder="https://www.youtube.com/username" type="text" value="{{ social_media_dict.youtube }}" name="youtube"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('youtubeInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteYouTubeModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- Reddit -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-reddit text-orange-600 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="redditInput" placeholder="https://www.reddit.com/username" type="text" value="{{ social_media_dict.reddit }}" name="reddit"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('redditInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteRedditModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- pinterest -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-pinterest text-red-800 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="pinterestInput" placeholder="https://pinterest.com/username" type="text" value="{{ social_media_dict.pinterest }}" name="pinterest"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('pinterestInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deletePinterestModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- Medium -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-medium text-gray-800 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="mediumInput" placeholder="https://medium.com/username" type="text" value="{{ social_media_dict.medium }}" name="medium"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('mediumInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteMediumModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <!-- Github -->
+       <div class="flex items-center space-x-4">
+        <i class="fab fa-github text-gray-800 w-6">:</i>
+        <input class="w-full mt-1 p-2 border rounded-md social-input text-blue-600" disabled id="githubInput" placeholder="https://github.com/username" type="text" value="{{ social_media_dict.github }}" name="github"/>
+        <button class="text-gray-500 hover:text-gray-700" onclick="toggleSocialEdit('githubInput', 'socialSaveButton')" type="button">
+         <i class="fas fa-edit">
+         </i>
+        </button>
+        <button class="text-red-500 hover:text-red-700" onclick="openDeleteModal('deleteGithubModal')" type="button">
+         <i class="fas fa-trash">
+         </i>
+        </button>
+       </div>
+       <div class="flex justify-end mt-4">
+        <button class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-md" disabled id="socialSaveButton" type="submit">
+         Save changes
+        </button>
+       </div>
+      </div>
+     </form>
+    </div>
+   </div>
+   <!-- Advanced Settings Tab -->
+   <div class="tabcontent" id="AdvancedSettings">
+     <!-- Change Password -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+     <h3 class="text-xl font-semibold mb-4 text-blue-900">
+      Change password
+     </h3>
+     <p class="text-gray-500 mb-6">
+      Here you can set your new password
+     </p>
+     <form class="change_password" method="post" action="{% url 'change_password' %}?tab=AdvancedSettings" name="changePassword">
+      {% csrf_token %}
+      <div class="mb-4 relative">
+       <label class="block text-gray-700">
+        Old Password<span class="text-red-600">*</span>
+       </label>
+       <input class="w-full mt-1 p-2 border rounded-md pr-10" id="oldPassword" placeholder="Old Password" required type="password" name="oldPassword"/>
+       <img
+          id="toggleOldPassword"
+          src="https://cdn-icons-png.flaticon.com/512/8860/8860683.png"
+          alt="Toggle Password"
+          width="24"
+          height="24"
+          class="absolute right-4 cursor-pointer transform -translate-y-1/2"
+          onclick="togglePasswordVisibility('oldPassword', 'toggleOldPassword')"
+          style="top:48px"
+        />
+      </div>
+      <div class="mb-4 relative">
+       <label class="block text-gray-700">
+        New Password<span class="text-red-600">*</span>
+       </label>
+       <input class="w-full mt-1 p-2 border rounded-md pr-10" id="newPassword" placeholder="New Password" required type="password" name="newPassword"/>
+       <img
+          id="toggleNewPassword"
+          src="https://cdn-icons-png.flaticon.com/512/8860/8860683.png"
+          alt="Toggle Password"
+          width="24"
+          height="24"
+          class="absolute right-4 cursor-pointer transform -translate-y-1/2"
+          onclick="togglePasswordVisibility('newPassword', 'toggleNewPassword')"
+          style="top:48px"
+        />
+      </div>
+      <div class="mb-4 relative">
+       <label class="block text-gray-700">
+        New Password Confirmation<span class="text-red-600">*</span>
+       </label>
+       <input class="w-full mt-1 p-2 border rounded-md pr-10" id="confirmPassword" placeholder="New Password Confirmation" required type="password" name="confirmPassword"/>
+       <img
+          id="toggleConfirmPassword"
+          src="https://cdn-icons-png.flaticon.com/512/8860/8860683.png"
+          alt="Toggle Password"
+          width="24"
+          height="24"
+          class="absolute right-4 cursor-pointer transform -translate-y-1/2"
+          onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword')"
+          style="top:48px"
+        />
+       <p class="text-sm mt-1">
+       </p>
+      </div>
+      <div class="flex justify-end">
+       <button class="bg-purple-600 text-white px-4 py-2 rounded-md disabled-button" id="changePasswordButton" type="submit">
+        Change password
+       </button>
+      </div>
+     </form>
+    </div>
+    <!-- Delete Account -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+     <h3 class="text-xl font-semibold mb-4 text-red-600">
+      Delete Account
+     </h3>
+     <p class="text-gray-500 mb-6">
+      Warning: Deleting your account is a permanent action and cannot be undone.
+     </p>
+     <div class="flex justify-end">
+      <button class="bg-red-600 text-white px-4 py-2 rounded-md" onclick="openDeleteModal('deleteAccountModal')" type="button">
+       Delete Account
+      </button>
+     </div>
+    </div>
+   </div>
+  </div> 
+  {% include "footer.html" %}
+</div>
+{% endblock %}

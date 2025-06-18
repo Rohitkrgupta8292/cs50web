@@ -1,0 +1,746 @@
+{% extends "layout.html" %} {% load static %} {% load my_filters %} {% block title %} {{ post.title }}
+{% endblock %} {% block content %} {% comment %} loading skeleton for
+post_detail.html {% endcomment %}
+<div id="loadingFrame" class="flex-col justify-between min-h-screen  {% if request.user.is_authenticated %} lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72 {% endif %} ">
+  {% if not request.user.is_authenticated %}
+  <header class="flex justify-between items-center p-2 sm:p-6">
+    <div
+      class="w-[150px] sm:w-[180px] btn-hover transition-transform duration-300"
+    >
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    {% if not user.is_authenticated %}
+    <div class="space-x-4 flex">
+      <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+      <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+    </div>
+    {% else %}
+    <div class="space-x-4">
+      <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+    </div>
+    {% endif %}
+  </header>
+  {% endif %}
+  <!-- Blog Header -->
+  <div class="bg-gray-100 rounded-lg shadow-md overflow-hidden mb-8 p-2 sm:p-6">
+    <div class="h-[500px] w-full bg-gray-300 pulse">
+      <div class="p-2 sm:p-6">
+        <h1
+          class="h-10 w-full sm:w-1/2 bg-gray-300 pulse mx-auto sm:mx-0 mb-4"
+        ></h1>
+        <div
+          class="flex items-center mb-4 rounded-lg p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 justify-between sm:justify-start"
+        ></div>
+        <div class="flex items-center text-sm text-gray-600 mb-4 px-2">
+          <p class="mr-4 rounded-lg w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"></p>
+        </div>
+        <p class="mr-4 rounded-lg w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"></p>
+        <p class="mr-4 rounded-lg w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"></p>
+        <div class="rounded-lg w-[90%] h-full mb-4 px-2">
+          <!-- Use safe to render HTML content -->
+        </div>
+        <div class="flex justify-start space-x-4 text-gray-600 mt-6">
+          <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+          <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+          <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Comments Section -->
+  <div class="bg-gray-100 rounded-lg shadow-md p-4 sm:p-6 mb-8">
+    <h2 class="text-2xl text-blue-900 font-bold mb-4">Comments</h2>
+    <div class="space-y-4">
+      <!-- Loading skeleton for comment 1 -->
+      <div class="flex items-start space-x-4 animate-pulse">
+        <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-gray-300 rounded w-1/4"></div>
+          <div class="h-4 bg-gray-300 rounded w-1/6"></div>
+          <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+        </div>
+      </div>
+      <!-- Loading skeleton for comment 2 -->
+      <div class="flex items-start space-x-4 animate-pulse">
+        <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-gray-300 rounded w-1/4"></div>
+          <div class="h-4 bg-gray-300 rounded w-1/6"></div>
+          <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 animate-pulse">
+      <div class="w-full h-24 bg-gray-300 rounded-lg"></div>
+      <div class="mt-4 w-32 h-10 bg-blue-300 rounded-lg"></div>
+    </div>
+  </div>
+  <!-- Related Posts Section -->
+  <div class="bg-gray-100 rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-2xl text-blue-900 font-bold mb-4">Related Posts</h2>
+    {% if related_posts %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for post in related_posts %} {% if forloop.counter <= 3 %}
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="w-full h-48 bg-gray-300 pulse"></div>
+        <div class="p-4">
+          <div class="h-6 bg-gray-300 rounded w-3/4 mb-2 pulse"></div>
+          <div class="h-4 bg-gray-300 rounded w-full mb-2 pulse"></div>
+          <div class="h-4 bg-gray-300 rounded w-5/6 pulse"></div>
+        </div>
+      </div>
+      {% endif %} {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-blue-900 text-center font-bold text-xl">
+      No related posts found.
+    </p>
+    {% endif %}
+  </div>
+</div>
+<div id="loadedFrame"
+  class="text-white flex-col hidden justify-between min-h-screen  {% if request.user.is_authenticated %} lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72 {% endif %}">
+  {% if messages %}
+  <div
+    id="message"
+    class="alert alert-container text-center font-bold shake fixed top-4 right-4 z-50">
+    {% for message in messages %} {% if message.tags == 'success' %}
+    <div
+      class="alert-success p-3 m-3 bg-green-300 text-green-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% elif message.tags == 'error' %}
+    <div
+      class="alert-error p-3 m-3 bg-red-300 text-red-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% elif message.tags == 'info' %}
+    <div
+      class="alert-error p-3 m-3 bg-red-300 text-red-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% endif %} {% endfor %}
+  </div>
+  {% endif %}
+  <!--header-->
+  {% if not request.user.is_authenticated %}
+  <header class="head flex justify-between items-center p-2 sm:p-6">
+    <div
+      class="w-[150px] sm:w-[180px] btn-hover transition-transform duration-300"
+    >
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    {% if not request.user.is_authenticated %}
+    <div class="space-x-4">
+      <a href="{% url 'signup' %}">
+        <button
+          class="bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-signup"
+        >
+          Sign Up
+        </button></a
+      >
+      <a href="{% url 'login' %}">
+        <button
+          class="border border-white text-white font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-login"
+        >
+          Login
+        </button></a
+      >
+    </div>
+    {% else %}
+    <div class="space-x-4">
+      <a href="{% url 'logout' %}">
+        <button
+          class="svg-btn bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition -transform duration-300 btn-hover btn-signup flex items-center justify-center gap-2"
+        >
+          <span>Logout</span>
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button
+      ></a>
+    </div>
+    {% endif %}
+  </header>
+  {% else %}
+  {% include "header.html" %}
+  {% endif %}
+  <!-- Blog Header -->
+  <div class="bg-gray-100 rounded-lg shadow-md overflow-hidden mb-8 p-2 sm:p-6">
+    {% if post.thumbnail %}
+    <img
+      alt="{{ post.title }}'s thumbnail"
+      class="w-full h-80 sm:h-96 object-cover border border-blue-900 rounded-lg cursor-pointer hover:opacity-50"
+      height="500"
+      src="{{ post.thumbnail.url }}"
+      width="1200"
+      onclick="openImageModal('{{ post.thumbnail.url }}')"
+    />
+    {% endif %}
+    <div class="px-2 pt-2 sm:px-6 sm:pt-6">
+      <h1 class="text-3xl text-blue-900 font-bold mb-4">{{ post.title }}.</h1>
+      <div class="flex items-center mb-4 author-info text-blue-900 rounded-lg p-2 max-[500px]:p-1 sm:w-fit justify-between sm:justify-start sm:gap-10">
+        <a href="{% url 'user_profile' post.author.username %}">
+          <div class="flex items-center cursor-pointer">
+            {% if post.author.profile_picture %}
+            <img
+              alt="{{ post.author.username }}'s profile picture"
+              src="{{ post.author.profile_picture.url }}"
+              class="w-12 h-12 rounded-full mr-3 border-2 border-blue-900"
+              height="100"
+              width="100"
+            />
+            {% else %}
+            <img
+              alt="Author profile picture"
+              src="{% static '/no-profile-pic.png' %}"
+              class="w-12 h-12 rounded-full mr-3 border-2 border-blue-900"
+              height="100"
+              width="100"
+            />
+            {% endif %}
+            <div class="flex flex-col">
+              <p class="text-lg font-semibold">
+                {% if post.author.first_name and post.author.last_name %}
+                {{ post.author.first_name }} {{ post.author.last_name }}
+                {% else %}
+                {{ post.author.username|remove_special_chars }}
+                {% endif %}
+              </p>
+              <p class="text-sm underline">@{{ post.author.username }}</p>
+            </div>
+          </div>
+        </a>
+        {% if post.author == request.user %}
+        <!-- Settings Button -->
+        <button
+          class="bg-blue-900 text-white py-2 px-3 rounded-full transition-transform duration-300 btn-hover btn-login border hover:border-blue-900 sm:mx-4 font-bold"
+          onclick="settingsUrl()"
+        >
+          <i class="fas fa-cog mx-1"></i>
+          <span>Settings</span>
+        </button>
+        {% else %}
+        {% if is_following_user %}
+        <!-- Unfollow Button -->
+        <button
+          class="bg-blue-900 follow-button-{{ post.author.username }} text-white py-2 px-3 rounded-full space-x-1 transition-transform duration-300 btn-hover btn-login border hover:border-blue-900 sm:mx-4 font-bold"
+          onclick="followUnfollow(this, '{{ post.author.username }}')"
+        >
+          <i class="fas fa-user-check"></i>
+          <span>Following</span>
+        </button>
+        {% else %}
+        <!-- Follow Button -->
+        <button
+          class="bg-blue-900 follow-button-{{ post.author.username }} text-white py-2 px-3 rounded-full space-x-1 transition-transform duration-300 btn-hover btn-login border hover:border-blue-900 sm:mx-4 font-bold"
+          {% if request.user.is_authenticated %}
+          onclick="followUnfollow(this, '{{ post.author.username }}')"
+          {% else %}
+          onclick="showLoginMessage()"
+          {% endif %}
+          >
+          <i class="fas fa-user-plus"></i>
+          <span>Follow</span>
+        </button>
+        {% endif %}
+        {% endif %}
+      </div>
+      <div class="flex justify-between items-center mb-4 max-sm:flex-col max-sm:items-start max-sm:gap-2">
+        <div class="flex items-center text-gray-600 px-2">
+          {% if post.created_at < post.updated_at %}
+          <p><strong>Last updated:</strong>
+            <span class="underline">{{ post.updated_at|date:"F j, Y" }}</span>
+          </p>
+          {% else %}
+          <p class="mr-4"><strong>Published on:</strong>
+            <span class="underline"> {{ post.created_at|date:"F j, Y" }}</span>
+          </p>
+          {% endif %}
+        </div>
+        {% if request.user.is_authenticated %}
+        {% if post.category.name %}
+        <a href="{% url 'category' post.category.name %}"class="font-semibold font- mb-2 bg-blue-100  px-3 py-2 rounded-2xl hover:bg-blue-200 text-gray-700">
+          Category:
+          <span class="text-blue-900"> {{ post.category.name }} </span>
+        </a>
+        {% endif %}
+        {% else %}
+        <div onclick="showLoginMessage()" class="font-semibold font- mb-2 bg-blue-100  px-3 py-2 rounded-2xl hover:bg-blue-200 text-gray-700 cursor-pointer">
+          Category:
+          {% if post.category.name %}
+          <span class="text-blue-900"> {{ post.category.name }} </span>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% comment %} <p class="text-sm text-blue-900 underline mb-4 font-semibold px-2">
+        {{ post.tags.all|join:", " }}
+      </p> {% endcomment %}
+      <div class="post-content text-gray-700 mb-4 px-2 leading-relaxed">
+        <!-- Use safe to render HTML content -->
+        {{ post.content|safe }}
+      </div>
+      <div class="text-sm text-blue-900 mb-4 font-semibold px-2 flex gap-2 flex-wrap">
+        {% comment %} {{ post.tags.all|join:", " }} {% endcomment %}
+        {% if post.tags.all %}
+        {% for tag in post.tags.all %}
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'tag' tag.name %}" class="bg-blue-100 underline px-3 py-2 rounded-2xl hover:bg-blue-200 cursor-pointer"
+        >#{{ tag.name }}</a>
+        {% else %}
+        <span onclick="showLoginMessage()" class="bg-blue-100 underline px-3 py-2 rounded-2xl hover:bg-blue-200 cursor-pointer">#{{ tag.name }}
+        </span>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+      </div>
+      <div class="flex justify-start space-x-4 text-gray-600 mt-6 text-lg">
+        {% if request.user.is_authenticated %}
+        <button
+          class="text-blue-600 rounded-full p-1 px-2 btn-comment"
+          onclick="toggleCommentSection()"
+        >
+          <i class="fas fa-comments"></i> Comment
+        </button>
+        {% else %}
+        <button
+          class="text-blue-600 rounded-full p-1 px-2 btn-comment"
+          onclick="showLoginMessage()"
+        >
+          <i class="fas fa-comments"></i> Comment
+        </button>
+        {% endif %}
+        <button
+          class="text-green-600 rounded-full p-1 px-2 btn-share"
+          onclick="sharePost('{{ post.title }}', '{{ post.get_absolute_url }}')"
+         >
+        <i class="fa-solid fa-share-nodes"></i> Share
+        </button>
+        <button
+          class="text-red-700 rounded-full p-1 px-2 btn-like"
+          {% if request.user.is_authenticated %}
+          onclick="toggleLike({{ post.id }})"
+          {% else %}
+          onclick="showLoginMessage()"
+          {% endif %}
+        >
+          <i id="likeIcon" class="{% if user_has_liked %}fas{% else %}far{% endif %} fa-heart" ></i>
+          Like
+        </button>
+      </div>
+    </div>
+    <!-- Comments Section -->
+     {% if request.user.is_authenticated %}
+    <div id="commentsSection"
+      class="overflow-hidden transition-height duration-300 ease-in-out h-0 p-3">
+      <div class="border-t border-gray-400 mt-4 pt-4">
+        <div class="flex items-center space-x-6">
+          <div
+            class="flex items-center space-x-2 cursor-pointer rounded-full border-2 border-blue-500 px-2 py-1 bg-blue-500 text-white"
+            id="comment-tab">
+            <i id="comment-icon" class="far fa-comment text-xl"> </i>
+            <!-- showing comment count of post -->
+            {% if post.comments.count %}
+            <span class="text-lg"> {{ post.comments.count }} </span>
+            {% endif %}
+          </div>
+          <div
+            class="flex items-center space-x-2 cursor-pointer px-2 py-1 text-blue-900"
+            id="like-tab">
+            <i id="like-icon" class="far fa-heart text-xl"> </i>
+            <span id="likeCount" class="text-lg">{% if post.likes.count >= 1 %} {{ post.likes.count }} {% endif %} </span>
+          </div>
+        </div>
+        <div id="comment-section" class="mt-4">
+          <div
+            class="flex items-center space-x-2 border-y border-gray-700 py-2">
+            {% if request.user.profile_picture %}
+            <img
+              alt="{{ request.user.username }}'s profile picture"
+              class="rounded-full cursor-pointer border-2 border-blue-900 w-10 h-10"
+              height="40"
+              src="{{ request.user.profile_picture.url }}"
+              width="40"
+            />
+            {% else %}
+            <img
+              alt="User profile picture"
+              class="rounded-full border-2 border-blue-900 w-10 h-10"
+              height="40"
+              src="{% static '/no-profile-pic.png' %}"
+              width="40"
+            />
+            {% endif %}
+            <div class="w-full">
+              <div
+                id="reply-info"
+                class="hidden bg-gray-200 p-2 rounded-md mb-2 justify-between items-center border border-gray-700">
+                <span id="reply-info-text" class="text-gray-900 italic"> </span>
+                <i
+                  class="fas fa-times cursor-pointer rounded-full bg-gray-400 hover:bg-red-500 p-1 px-[6px]"
+                  id="reply-info-close"
+                >
+                </i>
+              </div>
+              <div class="flex items-center relative">
+                <input
+                  type="hidden"
+                  name="csrfmiddlewaretoken"
+                  value="{{ csrf_token }}"
+                />
+                <input
+                  class="bg-white text-gray-900 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-700"
+                  id="reply-input"
+                  placeholder="Reply as @{{ request.user.username }}"
+                  type="text"
+                />
+                <i
+                  class="far fa-paper-plane ml-2 text-lg text-blue-900 cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2"
+                  id="send-icon"
+                >
+                </i>
+              </div>
+            </div>
+          </div>
+          <div
+            id="comment-part"
+            class="mt-4 space-y-4 h-64 overflow-y-auto scrollbar-thin">
+            {% if comments %} {% for comment in comments %}
+            <div class="flex space-x-4">
+              {% if comment.author.profile_picture %}
+              <img
+                alt="{{ comment.author.username }}'s profile picture"
+                class="rounded-full cursor-pointer border-2 border-blue-900 w-10 h-10"
+                height="40"
+                src="{{ comment.author.profile_picture.url }}"
+                width="40"
+              />
+              {% else %}
+              <img
+                alt="User profile picture"
+                class="rounded-full border-2 border-blue-900 w-10 h-10"
+                height="40"
+                src="{% static '/no-profile-pic.png' %}"
+                width="40"
+              />
+              {% endif %}
+              <div>
+                <div class="text-blue-900 flex items-center gap-5">
+                  <div class="cursor-pointer">
+                    <span>
+                      {{ comment.author.first_name }} {{ comment.author.last_name }}
+                      {% if request.user == comment.author %}
+                       (you)
+                      {% endif %}
+                      </span>
+                    <span class="text-gray-700 text-sm hover:underline">
+                      @{{ comment.author.username }}</span>
+                    {% if comment.author == post.author %}
+                    <span class="border-2 bg-blue-100 p-1 text-sm rounded-lg"
+                      ><strong>Author</strong></span>
+                    {% endif %}
+                  </div>
+                  <div class="relative">
+                    <button
+                      class="three-dots-btn rounded-full text-gray-700 hover:bg-gray-300 text-xl font-bold px-1 py-[1x] hover:text-blue-600"
+                      onclick="toggleMenu('menu-{{ comment.id }}')">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <div
+                      id="menu-{{ comment.id}}"
+                      class="menu hidden absolute right-0 mt-2 w-28 bg-gray-300 rounded-md shadow-lg z-50">
+                      <div class="py-1 font-semibold">
+                        <span
+                          class="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                          >{{ comment.created_at|date:"j/n/y, g:i a" }}</span>
+                        <a
+                          href="{% url 'user_profile' comment.author.username %}"
+                          class="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                          >View Profile</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-gray-200 p-3 rounded-md mt-1">
+                  <p class="text-gray-900 text-sm">{{ comment.content }}</p>
+                </div>
+                <div
+                  class="flex items-center space-x-4 mt-1 text-gray-500 text-sm"
+                >
+                  <div
+                    class="flex items-center space-x-2 cursor-pointer reply-button text-blue-900"
+                    data-comment-id="{{ comment.id }}"
+                    data-comment-author="{{ comment.author.username }}"
+                    data-comment-content="{{ comment.content }}"
+                  >
+                    <i id="reply-icon-{{ comment.id }}" class="far fa-comment reply-icon"> </i>
+                    <span>
+                      Reply {% if comment.replies.count > 0 %}
+                      ({{comment.replies.count }}) {% endif %}
+                    </span>
+                  </div>
+                  {% if comment.replies.count > 0 %}
+                  <button
+                    class="toggle-replies-button font-semibold text-blue-600"
+                    data-comment-id="{{ comment.id }}"
+                  >
+                    Show Replies
+                  </button>
+                  {% endif %}
+                </div>
+                <div class="replies-section mt-2 hidden"
+                  id="replies-section-{{ comment.id }}">
+                  {% for reply in comment.replies.all %}
+                  <div class="flex items-start space-x-4">
+                    {% if reply.author.profile_picture %}
+                    <img
+                      alt="{{ reply.author.username }}'s profile picture"
+                      class="rounded-full cursor-pointer border-2 border-blue-900 w-10 h-10"
+                      height="40"
+                      src="{{ reply.author.profile_picture.url }}"
+                      width="40"
+                    />
+                    {% else %}
+                    <img
+                      alt="reply profile picture"
+                      class="rounded-full border-2 border-blue-900 w-10 h-10"
+                      height="40"
+                      src="{% static '/no-profile-pic.png' %}"
+                      width="40"
+                    />
+                    {% endif %}
+                    <div>
+                      <div class="text-blue-900 flex items-center gap-5">
+                        <div class="cursor-pointer">
+                          <span class="">
+                            {{ reply.author.first_name }} {{ reply.author.last_name }}
+                            {% if request.user == reply.author%}
+                              (you)
+                            {% endif %}
+                          </span>
+                          <span class="text-gray-700 text-sm hover:underline">
+                            @{{ reply.author.username }}</span>
+                          {% if reply.author == post.author %}
+                          <span
+                            class="border-2 bg-blue-100 p-1 text-sm rounded-lg"
+                            ><strong>Author</strong></span>
+                          {% endif %}
+                        </div>
+                        <div class="relative">
+                          <button
+                            class="three-dots-btn rounded-full text-gray-700 hover:bg-gray-300 text-xl font-bold px-1 py-[1x] hover:text-blue-900"
+                            onclick="toggleMenu('menu-{{ reply.id }}')"
+                          >
+                            <i class="fas fa-ellipsis-h"></i>
+                          </button>
+                          <div
+                            id="menu-{{ reply.id}}"
+                            class="menu hidden absolute right-0 mt-2 w-28 bg-gray-300 rounded-md shadow-lg z-50"
+                          >
+                            <div class="py-1 font-semibold">
+                              <span
+                                class="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                                >{{ reply.created_at|date:"j/n/y, g:i a"}}</span>
+                              <a
+                                href="{% url 'user_profile' reply.author.username %}"
+                                class="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                                >View Profile</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="bg-gray-200 p-3 rounded-md mt-1">
+                        <p class="text-gray-900 text-sm">{{ reply.content }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %} {% else %}
+            <div
+              class="flex flex-col items-center justify-center space-x-4 mt-16"
+            >
+              <i class="far fa-comment text-blue-900 text-[45px]"> </i>
+              <p class="text-blue-900 text-center font-bold text-xl">
+                Be the first to comment.
+              </p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div id="like-section" class="mt-4 hidden w-full">
+          <div 
+            id="like-part"
+            class="h-64 overflow-y-auto scrollbar-thin border-t border-gray-400 pt-4">
+            {% for like, is_following in post_likes_with_is_following  %}
+            <div class="flex items-center justify-between hover:bg-gray-300 p-2 rounded-md">
+              <div onclick="RedirectToUrl('{% url 'user_profile' like.user.username %}')" class="like-user flex items-center space-x-4 cursor-pointer">
+                <img
+                  alt="{{ like.user.username }}'s profile picture"
+                  class="rounded-full h-10  user-image"
+                  height="40"
+                  width="40"
+                  src="{% if like.user.profile_picture %}{{ like.user.profile_picture.url }}{% else %}{% static '/no-profile-pic.png' %}{% endif %}"
+                  {% comment %} src="{% static '/no-profile-pic.png' %}" {% endcomment %}
+                />
+                <div class="flex flex-col">
+                  <div class="text-red-700 font-semibold">
+                    <span> 
+                      {% if like.user.first_name and like.user.last_name %}
+                      {{ like.user.first_name }} {{ like.user.last_name }}
+                      {% else %}
+                      {{ like.user.username|remove_special_chars }}
+                      {% endif %}
+                    {% if request.user == like.user %}
+                      (you)
+                    {% endif %}
+                    </span>
+                    {% if like.user == post.author %}
+                    <span class="border-2 bg-blue-100 p-1 text-sm rounded-lg"
+                      ><strong>Author</strong></span>
+                    {% endif %}
+                  </div>
+                  <span class="username text-gray-500 text-sm mt-[-5px]"> @{{ like.user.username }} </span>
+                </div>
+              </div>
+              {% if is_following %}
+              <button  class="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-700 space-x-1 follow-button-{{ like.user.username }}"
+                onclick="followUnfollow(this, '{{ like.user.username }}')"
+              >
+                <i class="fas fa-user-check"></i>
+                <span>following</span>
+              </button>
+              {% else %}
+              {% if request.user == like.user %}
+              <button class="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-700 space-x-1"
+                onclick="settingsUrl()">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+              </button>
+              {% else %}
+              <button class="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-700 space-x-1 follow-button-{{ like.user.username }}"
+                {% if request.user.is_authenticated %}
+                  onclick="followUnfollow(this, '{{ like.user.username }}')"
+                {% else %}
+                  onclick="showLoginMessage()"
+                {% endif %}
+              >
+                <i class="fas fa-user-plus"></i>
+                <span>Follow</span>
+              </button>
+              {% endif %}
+              {% endif %}
+            </div>
+            {% endfor %} 
+            <div
+              id="NoLike"
+              class="flex flex-col items-center justify-center space-x-4 mt-16">
+              {% if post.likes.count == 0 %}
+              <i class="far fa-heart text-blue-900 text-[45px]"> </i>
+              <p class="text-blue-900 text-center font-bold text-xl">
+                Be the first to like.
+              </p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <!-- Related Posts Section -->
+  <div class="bg-gray-100 rounded-lg shadow-md p-6">
+    <div class="border-b border-gray-400 pb-4 mb-4">
+      <h2 class="text-2xl font-bold text-blue-900">Related Posts</h2>
+    </div>
+    {% if related_posts %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for post in related_posts %}
+       {% comment %} {% if forloop.counter <= 3 %} {% endcomment %}
+      <a href="{% url 'post_detail' post.slug %}">
+        <div
+          class="bg-white rounded-lg shadow-lg transition-transform duration-300 overflow-hidden blog-tile"
+        >
+          {% if post.thumbnail %}
+          <img
+            alt="{{ post.title }}'s thumbnail"
+            class="w-full h-32 object-cover"
+            height="400"
+            src="{{ post.thumbnail.url }}"
+            width="600"
+          />
+          {% endif %}
+          <div class="p-4">
+            <h3 class="text-lg text-blue-900 font-bold mb-2">
+              {{ post.title }}
+            </h3>
+            <p class="text-gray-700">{{ post.get_limited_content|safe }}</p>
+          </div>
+        </div>
+      </a>
+      {% comment %} {% endif %} {% endcomment %}
+      {% endfor %}
+    </div>
+    {% comment %} {% if related_posts_count > 3 %}
+    <div class="flex justify-center mt-4">
+      <button
+        class="view-more-button shadow-lg bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-view"
+        onclick="showLoginMessage()"
+      >
+        View More...
+      </button>
+    </div>
+    {% endif %}  {% endcomment %}
+    {% else %}
+    <p class="text-blue-900 text-center font-bold text-xl">
+      No related posts found.
+    </p>
+    {% endif %}
+  </div>
+  <!-- Footer -->
+  {% if request.user.is_authenticated %}
+  {% comment %} <footer class="font lg:hidden bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer> {% endcomment %}
+  {% include 'footer.html' %}
+  {%else%}
+  <footer class="font bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer>
+  {%endif%}
+</div>
+{% endblock content %}
