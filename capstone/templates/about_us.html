@@ -1,0 +1,123 @@
+{% extends "layout.html" %} {% load static %}
+{% block title %} About Us - Timber {% endblock %}
+{% block content %}
+<div class=" {% if request.user.is_authenticated %} lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72 {% endif %}">
+  {% if not request.user.is_authenticated %}
+  <header class="font head flex justify-between items-center p-3 sm:p-6">
+    {% comment %}
+    <div class="text-2xl font-bold">Timber</div>
+    {% endcomment %}
+    <div
+      class="w-[150px] sm:w-[180px] btn-hover transition-transform duration-300"
+    >
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    {% if not request.user.is_authenticated %}
+    <div class="space-x-4">
+      <a href="{% url 'signup' %}">
+        <button
+          class="bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-signup"
+        >
+          Sign Up
+        </button></a
+      >
+      <a href="{% url 'login' %}">
+        <button
+          class="border border-white text-white font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-login"
+        >
+          Login
+        </button></a
+      >
+    </div>
+    {% else %}
+    <div class="space-x-4">
+      <a href="{% url 'logout' %}">
+          <button
+          class="bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition
+          -transform duration-300 btn-hover btn-signup"
+          >
+          <span>Logout</span>
+          <i class="fa-solid fa-right-from-bracket"></i>
+          </button></a
+      >
+      </div>
+    {% endif %}
+  </header>
+  {% else %}
+  {% comment %} <header class="font lg:hidden head flex justify-between items-center p-3 h-16">
+    <div onclick="showSidebarModel()" class="text-white text-xl p-1 btn-hover transition-transform duration-300 w-7">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="logo" class="w-32 btn-hover transition-transform duration-300">
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div id="search-div" class="hidden relative px-4 w-full">
+      <i class="fas fa-search absolute left-7 top-3 text-blue-900">
+      </i>
+      <input id="search-input" class="p-2 pl-9 focus:outline-none focus:ring-4 focus:ring-blue-400 w-full rounded-2xl text-blue-900" placeholder="Search" type="text"/>
+    </div>
+    <div class="p-1 text-white text-xl btn-hover transition-transform duration-300 w-7">
+      <i id="search-icon" onclick="toggleSearch()" class="fa-solid fa-magnifying-glass"></i>
+      <i id="close-icon" onclick="toggleSearch()" class="fa-solid fa-xmark hidden"></i>
+     </div>
+  </header> {% endcomment %}
+  {% include "header.html" %}
+  {% endif %}
+  <div class="bg-gray-100 rounded-lg shadow-md text-blue-900 p-8 text-justify {% if not request.user.is_authenticated %} min-h-[calc(100vh-205px)] {% else %} lg:min-h-screen min-h-[calc(100vh-176px)] {% endif %}">
+    <h1 class="text-[28px] font-bold font">About Us</h1>
+    <p class="mb-4">
+      Welcome to Timber, your go-to personal blogging website founded by Rohit Gupta in 2024. At Timber, we believe in the power of storytelling and the connections it fosters among diverse audiences. Our platform is designed for everyone, providing a space where thoughts, experiences, and ideas can be shared freely.
+  
+      Rohit Gupta, our founder, is passionate about creating engaging content that resonates with readers from all walks of life. Whether you’re looking for insightful articles, travel tales, or personal reflections, Timber offers a variety of topics to explore. We aim to inspire, inform, and entertain through our rich array of posts.
+  
+      Join our community at Timber and embark on a journey of discovery through personal blogging. We invite you to engage with our content, share your thoughts, and be part of our growing family. Thank you for visiting Timber—where every story matters!
+      Your privacy is important to us. It is Timber's policy to respect your privacy regarding any information we may collect from you across our website, <a href="{% url 'home' %}">https://timber.com</a>, and other sites we own and operate.
+    </p>
+    <ul>
+      <li>By email: rohitkrgupta8292@gmail.com</li>
+    </ul>
+  </div>
+  <!-- Footer -->
+  {% if request.user.is_authenticated %}
+  {% comment %} <footer class="font lg:hidden bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer> {% endcomment %}
+  {% include 'footer.html' %}
+  {%else%}
+  <footer class="font bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer>
+  {%endif%}
+</div>
+{% endblock %}
+  

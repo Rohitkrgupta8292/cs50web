@@ -1,0 +1,19 @@
+{% load static %} {% load my_filters %}
+<header class="font lg:hidden head flex justify-between items-center p-3 h-16">
+    <div onclick="showSidebarModel()" class="text-white text-xl p-1 btn-hover transition-transform duration-300 w-7">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="logo" class="w-32 btn-hover transition-transform duration-300">
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div id="search-div" class="hidden relative px-4 w-full">
+      <i class="fas fa-search absolute left-7 top-3 text-blue-900">
+      </i>
+      <input id="mobile-search-input" class="p-2 pl-9 focus:outline-none focus:ring-4 focus:ring-blue-400 w-full rounded-2xl text-blue-900" placeholder="Search" type="text"/>
+      <div id="mobile-search-results" class="text-blue-900 hidden absolute z-10 w-[120%] sm:w-[110%] left-[-34px] bg-white rounded-lg border border-blue-600 h-[80vh] overflow-x-auto scrollbar-thin"></div>
+    </div>
+    <div class="p-1 text-white text-xl btn-hover transition-transform duration-300 w-7">
+      <i id="search-icon" onclick="toggleSearch()" class="fa-solid fa-magnifying-glass"></i>
+      <i id="close-icon" onclick="toggleSearch()" class="fa-solid fa-xmark hidden"></i>
+     </div>
+</header>

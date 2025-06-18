@@ -1,0 +1,291 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %} 
+{% block title%} {{ request.user.username}}'s Activity - TImber {% endblock %} 
+{% block content %}
+<div
+  class="flex flex-col justify-between min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+  <!-- Header -->
+ {% include "header.html" %} 
+ {% if messages %}
+  <div
+    class="alert alert-container text-center font-bold shake fixed top-4 right-4 z-50"
+  >
+    {% for message in messages %} {% if message.tags == 'success' %}
+    <div
+      class="alert-success p-3 m-3 bg-green-300 text-green-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% elif message.tags == 'error' %}
+    <div
+      class="alert-error p-3 m-3 bg-red-300 text-red-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% elif message.tags == 'info' %}
+    <div
+      class="alert-error p-3 m-3 bg-blue-300 text-blue-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% endif %} {% endfor %}
+  </div>
+ {% endif %}
+  <div class="bg-gray-100 p-2 sm:p-6 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    <div class="flex items-center">
+        <i onclick="goBack()" class="fa-solid fa-arrow-left-long text-2xl mr-1 cursor-pointer hover:text-blue-600 text-blue-900">
+        </i>
+        <h1 class="text-3xl font-bold text-blue-900">Activity</h1>
+    </div>
+    <div class="border-b-4 border-blue-500 w-24 mb-4">
+    </div>
+    {% if user_activities %}
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      {% for activity in user_activities %}
+      {% if activity.action_type == 'post_create' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         Post Created:
+        </p>
+        <p class="text-gray-500">
+         <span class="font-semibold">Post Title:</span> <span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.post.get_absolute_url}}">"{{ activity.post.title }}"</a></span>
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{ activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'post_update' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+        <div>
+         <p class="font-bold text-blue-700">
+          Post Updated:
+         </p>
+         <p class="text-gray-500">
+          <span class="font-semibold">Post Title:</span> <span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.post.get_absolute_url}}">"{{ activity.post.title }}"</a></span>
+         </p>
+        </div>
+        <p class="text-sm text-gray-400">
+         {{ activity.timestamp|timesince }} ago
+        </p>
+      </div>
+      {% elif activity.action_type == 'post_like' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+        <div>
+         <p class="font-bold text-blue-700">
+          Post Liked:
+         </p>
+         <p class="text-gray-500">
+          <span class="font-semibold">Post Title:</span> <span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.post.get_absolute_url}}">"{{ activity.post.title }}"</a></span>
+         </p>
+        </div>
+        <p class="text-sm text-gray-400">
+         {{ activity.timestamp|timesince }} ago
+        </p>
+      </div>
+      {% elif activity.action_type == 'post_unlike' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+        <div>
+         <p class="font-bold text-blue-700">
+          Post Unliked:
+         </p>
+         <p class="text-gray-500">
+          <span class="font-semibold">Post Title:</span> <span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.post.get_absolute_url}}">"{{ activity.post.title }}"</a></span>
+         </p>
+        </div>
+        <p class="text-sm text-gray-400">
+         {{ activity.timestamp|timesince }} ago
+        </p>
+      </div>
+      {% elif activity.action_type == 'post_comment' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         Post Commented:
+        </p>
+        <p class="text-gray-500">
+            <span class="font-semibold">Post Title:</span> <span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.post.get_absolute_url}}">"{{ activity.post.title }}"</a></span>
+        </p>
+        <p class="text-gray-500">
+         <strong>Comment:</strong> "{{ activity.comment.content }}"
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'post_reply' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         Post Replied:
+        </p>
+        <p class="text-gray-500">
+            <span class="font-semibold">Post Title:</span> <span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.post.get_absolute_url}}">"{{ activity.post.title }}"</a></span>
+        </p>
+        <p class="text-gray-500">
+          <strong>Reply:</strong> "{{ activity.comment.content }}"
+        </p>
+        <p class="text-gray-500">
+           <strong>On Comment:</strong> "{{ activity.comment.parent.content }}"
+        </p>
+        <p class="text-gray-500">
+           <strong>Reply To:</strong> "<span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.comment.parent.author.get_absolute_url }}">{{ activity.comment.parent.author.username }}"</a></span>
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'follow' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         You Followed:
+        </p>
+        <p class="text-sm text-gray-500">
+         <strong>Username:</strong><a href="{{ activity.followed_user.get_absolute_url }}"> {{ activity.followed_user.username }}</a></span>
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'unfollow' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         You Unfollowed:
+        </p>
+        <p class="text-sm text-gray-500">
+         <strong>Username:</strong><span class="hover:underline transition hover:text-blue-600"><a href="{{ activity.followed_user.get_absolute_url }}"> {{ activity.followed_user.username }}</a></span>
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'profile_update' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         You Updated Your Profile Picture
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'profile_delete' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         You Deleted Your Profile Picture
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'banner_update' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+            You Updated Your Banner Picture
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'banner_delete' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+           You Deleted Your Banner Image
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'user_info_update' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         You Updated Your Profile Information
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'password_change' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         You Changed Your Password
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'social_link_add' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         Social Link Added:
+        </p>
+        <p class="text-gray-500">
+         <strong>Link Type:</strong> "{{ activity.linkType }}"
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{ activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'social_link_update' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         Social Link Updated:
+        </p>
+        <p class="text-gray-500">
+         <strong>Link Type:</strong> "{{ activity.linkType }}"
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{ activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% elif activity.action_type == 'social_link_delete' %}
+      <div class="flex items-baseline justify-between mb-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300">
+       <div>
+        <p class="font-bold text-blue-700">
+         Social Link Deleted:
+        </p>
+        <p class="text-gray-500">
+         <strong>Link Type:</strong> "{{ activity.linkType }}"
+        </p>
+       </div>
+       <p class="text-sm text-gray-400">
+        {{ activity.timestamp|timesince }} ago
+       </p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center bg-white shadow-lg rounded-lg p-6 py-12">
+     <div class="flex justify-center items-center gap-2 mb-2">
+      <i class="fa-solid fa-info-circle text-4xl text-blue-900"></i>
+      <p class="text-2xl font-semibold text-blue-900">No Activity</p>
+     </div>
+      <p class="text-lg text-gray-500">You have not performed any activity yet.</p>
+    </div>
+    {% endif %}
+  </div>
+ {% include "footer.html" %}
+</div>
+{% endblock %}

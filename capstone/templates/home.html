@@ -1,0 +1,202 @@
+{% extends "layout.html" %} {% load static %} {% block content %}
+<div id="loadingFrame" class="flex-col justify-between min-h-screen">
+  <header class="flex justify-between items-center p-2 sm:p-6">
+    <div
+      class="w-[150px] sm:w-[180px] btn-hover transition-transform duration-300">
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div class="space-x-4 flex">
+      <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+      <div class="h-10 w-20 bg-gray-300 rounded-full pulse"></div>
+    </div>
+  </header>
+  <main
+    class="flex-grow flex flex-col justify-center items-center p-8 rounded-lg">
+    <div class="h-10 w-3/4 bg-gray-300 rounded mx-auto pulse mb-4"></div>
+    <div class="h-6 w-1/2 bg-gray-300 rounded mx-auto pulse mb-6"></div>
+    <div class="h-10 w-32 bg-gray-300 rounded-full mx-auto pulse"></div>
+  </main>
+  <section class="bg-gray-100 text-blue-900 p-4 sm:p-8">
+    <h2 class="h-10 w-1/3 bg-gray-300 mb-6 pulse mx-auto"></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% if posts %} {% for post in posts %} {% if forloop.counter <= 6 %}
+      <div class="posts bg-white rounded-lg shadow-lg w-full md:w-auto">
+        {% if post.thumbnail %}
+        <div class="h-40 bg-gray-300 pulse"></div>
+        {% endif %}
+        <div class="p-3 xl:p-6">
+          <div class="h-6 w-3/4 bg-gray-300 rounded pulse mb-2"></div>
+          <div class="h-4 w-full bg-gray-300 rounded pulse mb-4"></div>
+          <div class="h-4 w-1/2 bg-gray-300 rounded pulse"></div>
+        </div>
+      </div>
+      {% endif %} {% endfor %}
+    </div>
+    {% else %}
+    <p>No posts available.</p>
+    {% endif %}
+  </section>
+</div>
+
+<div id="loadedFrame" class="text-white flex-col justify-between min-h-screen hidden">
+  <header class="font flex justify-between items-center p-2 sm:p-6">
+    <div
+      class="w-[150px] sm:w-[180px] btn-hover transition-transform duration-300"
+    >
+      <a href="{% url 'home' %}"> <img src="{% static '/timber.png' %}" /></a>
+    </div>
+    <div class="space-x-4">
+      <a href="{% url 'signup' %}">
+        <button
+          class="bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-signup"
+        >
+          Sign Up
+        </button></a
+      >
+      <a href="{% url 'login' %}">
+        <button
+          class="border border-white text-white font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-login"
+        >
+          Login
+        </button></a
+      >
+    </div>
+  </header>
+  <main
+    class="flex-grow flex flex-col justify-center items-center p-8 rounded-lg">
+    <h1 class="text-4xl font-bold mb-4 text-center">Welcome to Timber</h1>
+    <p class="text-lg mb-8 text-center">
+      Get started with your blogging journey today!
+    </p>
+    <a href="{% url 'signup' %}">
+      <button
+        class="bg-white text-blue-900 font-semibold py-2 px-6 rounded-full transition-transform duration-300 btn-hover"
+      >
+        Get Started
+      </button></a
+    >
+  </main>
+  <section class="bg-gray-100 text-blue-900 p-4 sm:p-8">
+    <h2 class="font text-3xl font-bold mb-6 text-center">Featured Blogs</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% if posts %} {% for post in posts %}
+       {% comment %} {% if forloop.counter <= 6 %} {% endcomment %}
+      <div
+        class="posts bg-blue-100 rounded-lg shadow-lg transition-transform duration-300 blog-tile w-full md:w-auto"
+      >
+        <a href="{% url 'post_detail' post.slug %}">
+          {% if post.thumbnail %}
+          <img
+            alt="{{ post.title }}'s thumbnail"
+            class="w-full h-40 object-cover rounded-t-lg"
+            src="{{ post.thumbnail.url }}"
+          />
+          {% endif %}
+          <div class="px-3 pt-3 xl:px-6 xl:pt-6">
+            <h3 class="text-2xl font-bold mb-2 hover:underline">
+              {{ post.title }}
+            </h3>
+            <div class="text-lg mb-4 font-sans">
+              {{ post.get_limited_content|safe }} {% comment %}
+              <p class="text-sm mt-2 font-bold">
+                Category:{{ post.category.name }}
+              </p>
+              <p class="text-sm mt-1 font-bold underline">
+                {{ post.tags.all|join:", " }}
+              </p>
+              {% endcomment %}
+            </div>
+          </div>
+        </a>
+        <div class="px-3 pb-3 xl:px-6 xl:pb-6">
+          <div
+            class="flex items-center mb-4 justify-between rounded-lg author-info p-2">
+            <a href="{% url 'user_profile' post.author.username %}">
+              <div class="flex cursor-pointer">
+                {% if post.author.profile_picture %}
+                <img
+                  alt="{{ post.author.username }}'s profile picture"
+                  class="w-10 h-10 rounded-full mr-4 border-2 border-blue-900"
+                  src="{{ post.author.profile_picture.url }}"
+                />
+                {% else %}
+                <img
+                  alt="Author profile picture"
+                  class="w-10 h-10 rounded-full mr-4 border-2 border-blue-900"
+                  src="{% static '/no-profile-pic.png' %}"
+                />
+                {% endif %}
+                <div class="flex flex-col">
+                  <p class="font-bold">
+                    {{ post.author.first_name }} {{ post.author.last_name }}
+                  </p>
+                  <p class="text-sm underline">@{{ post.author.username }}</p>
+                </div>
+              </div>
+            </a>
+            <button
+              class="bg-blue-900 text-white py-2 px-3 rounded-full transition-transform duration-300 btn-hover btn-login border hover:border-blue-900 font-semibold"
+              onclick="showLoginMessage()"
+            >
+              <i class="fas fa-user-plus mx-1"></i>
+              Follow
+            </button>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex space-x-4 font-semibold">
+              <button
+                class="text-blue-900 rounded-full p-1 px-2 btn-profile"
+                onclick="showLoginMessage()"
+              >
+                <i class="fas fa-heart"></i> Like
+              </button>
+              <button
+                class="text-blue-900 rounded-full p-1 px-2 btn-profile"
+                onclick="showLoginMessage()">
+                <i class="fas fa-comments"></i> Comments
+              </button>
+              <button
+                class="text-blue-900 rounded-full p-1 px-2 btn-profile"
+                onclick="sharePost('{{ post.title }}', '{{ post.get_absolute_url }}')">
+                <i class="fa-solid fa-share-nodes"></i> Share
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% comment %} {% endif %} {% endcomment %}
+       {% endfor %}
+    </div>
+    {% if total_posts > 6 %}
+    <div class="flex justify-center mt-4">
+      <button
+        class="view-more-button shadow-lg bg-white text-blue-900 font-semibold py-2 px-4 rounded-full transition-transform duration-300 btn-hover btn-view"
+        onclick="showLoginMessage()"
+      >
+        View More...
+      </button>
+    </div>
+    {% endif %} {% else %}
+    <p>No posts available.</p>
+    {% endif %}
+  </section>
+  <footer class="font bg-blue-800 text-white py-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="{% url 'privacy_policy' %}" class="hover:underline"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms_and_conditions' %}" class="hover:underline"
+          >Terms and Conditions</a
+        >
+        <a href="{% url 'about_us' %}" class="hover:underline">About Us</a>
+      </div>
+      <p>
+        &copy; {{ current_year }}
+        <a class="hover:underline" href="{% url 'home' %}">Timber.</a> All
+        rights reserved.
+      </p>
+    </div>
+  </footer>
+</div>
+{% endblock content %}

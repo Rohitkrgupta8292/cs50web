@@ -1,0 +1,164 @@
+{% extends "layout.html" %}{% load static %}{% load my_filters %} 
+{% block title %} {{ request.user.username}}'s Dashboard - TImber {% endblock %} 
+{% block content %}
+<div
+  class="flex flex-col justify-between min-h-screen lg:ml-20 xl:ml-64 xl:mr-80 lg:mr-72">
+  <!-- Header -->
+  {% include "header.html" %} 
+  {% if messages %}
+  <div
+    class="alert alert-container text-center font-bold shake fixed top-4 right-4 z-50"
+  >
+    {% for message in messages %} {% if message.tags == 'success' %}
+    <div
+      class="alert-success p-3 m-3 bg-green-300 text-green-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% elif message.tags == 'error' %}
+    <div
+      class="alert-error p-3 m-3 bg-red-300 text-red-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% elif message.tags == 'info' %}
+    <div
+      class="alert-error p-3 m-3 bg-blue-300 text-blue-900 rounded-lg shadow-lg"
+    >
+      {{ message }}
+    </div>
+    {% endif %} {% endfor %}
+  </div>
+  {% endif %}
+  <div
+    class="p-2 sm:p-6 bg-gray-100 rounded-lg shadow-md lg:min-h-screen min-h-[calc(100vh-176px)]">
+    <!-- header part -->
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i onclick="goBack()" class="fa-solid fa-arrow-left-long text-2xl mr-1 cursor-pointer hover:text-blue-600 text-blue-900">
+        </i>
+        <h1 class="sm:text-2xl text-xl text-blue-900 font-semibold">
+          Dashboard
+        </h1>
+      </div>
+      <button onclick="create_post_URL()" class="bg-blue-500 text-white px-4 py-2 rounded-md">
+        Create New Post
+      </button>
+    </div>
+    <div class="border-b-4 border-blue-500 w-24 mb-4">
+    </div>
+    <!-- Analytics -->
+    <div class="bg-white shadow-md rounded-md p-4 mb-8">
+      <h2 class="text-xl font-semibold mb-4 text-blue-900 border-b">Analytics</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+          <h3 class="text-lg font-semibold">Total Posts</h3>
+          <p class="text-2xl font-bold">{{ post_count }}</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+          <h3 class="text-lg font-semibold">Total Likes</h3>
+          <p class="text-2xl font-bold">{{ post_likes_count }}</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+          <h3 class="text-lg font-semibold">Total Comments</h3>
+          <p class="text-2xl font-bold">{{ post_comments_count }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- User Posts -->
+    <div class="bg-white shadow-md rounded-md p-4 mb-8">
+      <div class="flex justify-between items-center mb-4 border-b">
+        <h2 class="text-xl font-semibold text-blue-900">Your Posts</h2>
+        <form method="get" action="{% url 'dashboard' %}">
+          <input
+            class="border border-gray-400 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="searchInputPosts"
+            name="q"
+            placeholder="Search posts title..."
+            type="text"
+            onkeyup="delayedSubmit(this.form)"
+            {% comment %} onkeypress="if (event.key === 'Enter') { this.form.submit(); }" {% endcomment %}
+            value="{{ query|default:'' }}"
+          />
+        </form>
+      </div>
+      {% if posts %}
+      <div class="space-y-4" id="postsContainer">
+        <!-- Post 1 -->
+        {% for post in posts %}
+        <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+          <a href="{% url 'post_detail' post.slug %}" class="flex items-start sm:space-x-4 mb-2 max-sm:flex-col">
+            {% if post.thumbnail %}
+            <img
+              alt="{{ post.title }}'s thumbnail"
+              class="w-32 h-20 max-sm:h-32 max-sm:w-[-webkit-fill-available] max-sm:mb-3 rounded-md"
+              height="200"
+              src="{{ post.thumbnail.url }}"
+              width="320"
+            />
+            {% endif %}
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-blue-900">{{ post.title }}</h3>
+              {% if post.created_at < post.updated_at %}
+              <p class="text-gray-600 text-sm">{{ post.updated_at|date:"F j, Y" }}</p>
+              {% else %}
+              <p class="text-gray-600 text-sm">{{ post.created_at|date:"F j, Y" }}</p>
+              {% endif %}
+              <p class="text-gray-700 mb-2">
+                {{ post.get_limited_content |safe }}
+              </p>
+            </div>
+          </a>
+          <div class="flex items-center space-x-4 text-gray-600">
+            <div class="flex items-center space-x-1 text-red-500">
+              <i class="fas fa-heart"> </i>
+              <span> {{ post.likes.count }} </span>
+            </div>
+            <div class="flex items-center space-x-1 text-blue-500">
+              <i class="fas fa-comment"> </i>
+              <span> {{ post.comments.count }} </span>
+            </div>
+            <button onclick="RedirectToUrl('{% url 'update_post' post.slug %}')" class="flex items-center space-x-1 text-green-500 hover:text-green-600 transition-transform transform hover:scale-105 duration-300">
+              <i class="fas fa-edit"> </i>
+              <span> Edit </span>
+            </button>
+            <button
+              class="flex items-center space-x-1 text-red-600 hover:text-red-700 transition-transform transform hover:scale-105 duration-300"
+              onclick="openDeleteModal('deletePostModal{{ post.id }}')">
+              <i class="fas fa-trash"> </i>
+              <span> Delete </span>
+            </button>
+          </div>
+        </div>
+        <!--post delete model-->
+        <div class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden" id="deletePostModal{{ post.id }}">
+          <div class="bg-white rounded-lg shadow-md p-6 w-96">
+           <h3 class="text-xl font-semibold mb-4 text-red-600">
+            Confirm Post Deletion
+           </h3>
+           <p class="text-gray-500 mb-6">
+            Are you sure you want to delete post: {{ post.title }}? This action cannot be undone.
+           </p>
+           <div class="flex justify-end">
+            <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md mr-2" onclick="closeDeleteModal('deletePostModal{{ post.id }}')" type="button">
+             Cancel
+            </button>
+            <form method="post" action="{% url 'delete_post' post.slug %}">
+             {% csrf_token %}
+               <button class="bg-red-600 text-white px-4 py-2 rounded-md"  type="submit">
+                Confirm
+               </button>
+            </form>
+           </div>
+          </div>
+        </div> 
+        {% endfor %}
+      </div>
+      {% else %}
+       <p class="text-blue-900 text-center font-bold text-xl">No posts found.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% include "footer.html" %}
+</div>
+{% endblock %}
